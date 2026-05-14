@@ -17,10 +17,12 @@
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes pop { 0%{transform:scale(0.8);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+        @keyframes pulseSlow { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 
         .float { animation: float 3s ease-in-out infinite; }
         .pop { animation: pop 0.4s ease-out; }
         .shake { animation: shake 0.5s; }
+        .pulse-slow { animation: pulseSlow 2s ease-in-out infinite; }
 
         .category-card {
             background: white;
@@ -124,6 +126,11 @@
             z-index: 1000;
         }
         .timer-display.active { display: flex; }
+        .timer-display.urgent { 
+            background: #fee2e2; 
+            color: #dc2626;
+            animation: pulseSlow 1s ease-in-out infinite;
+        }
 
         .streak-display {
             position: fixed;
@@ -162,22 +169,22 @@
             gap: 20px;
         }
 
-        .shape-visual {
-            width: 80px;
-            height: 80px;
-            display: inline-flex;
+        .animal-option {
+            width: 150px;
+            height: 150px;
+            border: 4px solid #E0E0E0;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 64px;
+            font-size: 80px;
+            background: white;
         }
-
-        .color-circle {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 12px;
-        }
+        .animal-option:hover { border-color: #3498DB; transform: scale(1.05); }
+        .animal-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
+        .animal-option.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
 
         .progress-bar {
             background: rgba(255,255,255,0.3);
@@ -193,14 +200,89 @@
             transition: width 0.8s;
         }
 
-        .save-notice {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-            padding: 16px;
-            border-radius: 16px;
-            margin: 20px 0;
-            font-weight: 700;
+        .number-option {
+            font-size: 32px;
+            font-weight: 900;
+        }
+
+        /* PANTALLA DE BLOQUEO */
+        .blocked-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            padding: 20px;
+        }
+
+        .blocked-card {
+            background: white;
+            border-radius: 32px;
+            padding: 48px;
+            max-width: 500px;
+            width: 100%;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .blocked-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+        }
+
+        .blocked-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #1e1b4b;
+            margin-bottom: 16px;
+        }
+
+        .blocked-message {
+            font-size: 18px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .blocked-stats {
+            background: #f1f5f9;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .blocked-stats-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 12px;
+        }
+
+        .blocked-stat {
+            text-align: center;
+        }
+
+        .blocked-stat-value {
+            font-size: 28px;
+            font-weight: 900;
+            color: #667eea;
+        }
+
+        .blocked-stat-label {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .timer-remaining {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 20px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
 </head>
@@ -215,6 +297,44 @@
     <div id="streak-display" class="streak-display">
         <span>🔥</span>
         <span id="streak-count">0</span>
+    </div>
+
+    <!-- BLOQUEADO -->
+    <div id="blocked-screen" class="blocked-screen hidden">
+        <div class="blocked-card pop">
+            <div class="blocked-icon">⏰</div>
+            <h1 class="blocked-title">¡Tiempo completado!</h1>
+            <p class="blocked-message">
+                Has usado tus <strong>30 minutos</strong> de hoy.<br>
+                Tu cerebro necesita descansar para aprender mejor. 🧠
+            </p>
+            
+            <div class="blocked-stats">
+                <div class="blocked-stats-row">
+                    <div class="blocked-stat">
+                        <div class="blocked-stat-value" id="blocked-xp">0</div>
+                        <div class="blocked-stat-label">XP ganados</div>
+                    </div>
+                    <div class="blocked-stat">
+                        <div class="blocked-stat-value" id="blocked-correct">0</div>
+                        <div class="blocked-stat-label">Correctas</div>
+                    </div>
+                    <div class="blocked-stat">
+                        <div class="blocked-stat-value" id="blocked-level">1</div>
+                        <div class="blocked-stat-label">Nivel</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timer-remaining">
+                <span>🌅</span>
+                <span id="time-until-unlock">Vuelve mañana para continuar</span>
+            </div>
+
+            <p style="margin-top: 20px; font-size: 14px; color: #94a3b8;">
+                💡 Estudia un poco cada día para mejores resultados
+            </p>
+        </div>
     </div>
 
     <!-- LOGIN -->
@@ -240,7 +360,7 @@
             <div style="text-align: center; margin-bottom: 40px;">
                 <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
                 <div id="grade-info" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 16px; font-weight: 700; margin-bottom: 16px;"></div>
-                <div style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700;">
+                <div id="daily-time-info" style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700;">
                     ⏱️ 30 minutos al día - Tu progreso se guarda automáticamente
                 </div>
             </div>
@@ -309,23 +429,40 @@
             '14': { level: 'Secundaria', grade: '3° año', category: 'secundaria' }
         };
 
+        // ANIMALES CON SUS SONIDOS
+        const ANIMALS = {
+            'leon': { emoji: '🦁', sound: 'rugido', name: 'león' },
+            'gato': { emoji: '🐱', sound: 'maullido', name: 'gato' },
+            'perro': { emoji: '🐶', sound: 'ladrido', name: 'perro' },
+            'vaca': { emoji: '🐮', sound: 'mugido', name: 'vaca' },
+            'pollo': { emoji: '🐔', sound: 'cacareo', name: 'gallina' },
+            'oveja': { emoji: '🐑', sound: 'balido', name: 'oveja' },
+            'pato': { emoji: '🦆', sound: 'cuac', name: 'pato' },
+            'caballo': { emoji: '🐴', sound: 'relincho', name: 'caballo' },
+            'cerdo': { emoji: '🐷', sound: 'gruñido', name: 'cerdo' },
+            'rana': { emoji: '🐸', sound: 'croar', name: 'rana' }
+        };
+
         // BANCO DE PREGUNTAS POR EDAD Y CATEGORÍA
         const QUESTION_BANK = {
             matematicas: {
                 inicial: [
-                    { q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { q: '¿Cuántos hay?', visual: '🍎🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
                     { q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
-                    { q: '¿Qué figura es?', visual: '🔴', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { q: '¿Qué color es?', visual: '<span class="color-circle" style="background: #E74C3C"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
-                    { q: '¿Cuál es más grande?', visual: '🐘 ', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
-                    { q: 'Cuenta: 1, 2, 3, ?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] }
+                    { q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { q: '¿Qué color es?', visual: '<span style="display:inline-block;width:40px;height:40px;background:#E74C3C;border-radius:50%"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
+                    { q: '¿Cuál es más grande?', visual: '🐘 🐜', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
+                    { q: 'Cuenta: 1, 2, 3, ?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] },
+                    { q: '¿Cuántos hay?', visual: '⭐⭐', type: 'count', ans: 2, opts: [1, 2, 3] },
+                    { q: '¿Cuántos hay?', visual: '🎈🎈🎈', type: 'count', ans: 4, opts: [3, 4, 5] }
                 ],
                 primaria_baja: [
                     { q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
                     { q: '9 - 4 = ?', visual: '', type: 'sub', ans: 5, opts: [4, 5, 6, 7] },
                     { q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
                     { q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
-                    { q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] }
+                    { q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] },
+                    { q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] }
                 ],
                 primaria_media: [
                     { q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
@@ -352,20 +489,24 @@
             lectura: {
                 inicial: [
                     { q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
-                    { q: '¿Qué palabra rima con "mesa"?', visual: '', type: 'rhyme', ans: 'beso', opts: ['silla', 'beso', 'casa'] },
                     { q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
-                    { q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] }
+                    { q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] },
+                    { q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'] },
+                    { q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'] },
+                    { q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'] }
                 ],
                 primaria_baja: [
                     { q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
                     { q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
                     { q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
-                    { q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] }
+                    { q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] },
+                    { q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'] }
                 ],
                 primaria_media: [
                     { q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
                     { q: '¿Qué tipo de palabra es "rápidamente"?', visual: '', type: 'grammar', ans: 'adverbio', opts: ['sustantivo', 'adjetivo', 'adverbio'] },
-                    { q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] }
+                    { q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] },
+                    { q: '¿Qué animal hace este sonido?', visual: '🐔', type: 'animal_sound', ans: 'pollo', opts: ['pato', 'pollo', 'gallo'] }
                 ],
                 primaria_alta: [
                     { q: '¿Cuál es el sujeto en: "María lee un libro"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
@@ -386,7 +527,7 @@
                 primaria_baja: [
                     { q: 'Si A=1, B=2, ¿C=?', visual: '', type: 'logic', ans: 3, opts: [2, 3, 4, 5] },
                     { q: 'Completa: 2, 4, 6, ?', visual: '', type: 'pattern', ans: 8, opts: [7, 8, 9, 10] },
-                    { q: '¿Qué instrucción sigue?', visual: '➡️ ️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] }
+                    { q: '¿Qué instrucción sigue?', visual: '➡️ ➡️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] }
                 ],
                 primaria_media: [
                     { q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', type: 'pattern', ans: 7, opts: [6, 7, 8, 9] },
@@ -429,7 +570,47 @@
             }
         };
 
-        // ESTADO
+        // ==========================================
+        // SISTEMA DE BLOQUEO DIARIO
+        // ==========================================
+        function getTodayKey() {
+            return new Date().toDateString();
+        }
+
+        function isBlocked() {
+            const blocked = localStorage.getItem('mq_daily_blocked');
+            if (!blocked) return false;
+            
+            const blockedDate = localStorage.getItem('mq_blocked_date');
+            const today = getTodayKey();
+            
+            // Si el bloqueo es de hoy, está bloqueado
+            if (blockedDate === today) return true;
+            
+            // Si el bloqueo es de un día anterior, liberar
+            if (blockedDate && blockedDate !== today) {
+                localStorage.removeItem('mq_daily_blocked');
+                localStorage.removeItem('mq_blocked_date');
+                return false;
+            }
+            
+            return false;
+        }
+
+        function setBlocked() {
+            localStorage.setItem('mq_daily_blocked', 'true');
+            localStorage.setItem('mq_blocked_date', getTodayKey());
+        }
+
+        function getBlockedSessionStats() {
+            const saved = localStorage.getItem('mq_session_stats');
+            if (saved) return JSON.parse(saved);
+            return { xp: 0, correct: 0, level: 1 };
+        }
+
+        // ==========================================
+        // ESTADO DE LA APP
+        // ==========================================
         let user = null;
         let userAge = null;
         let userGrade = null;
@@ -441,7 +622,7 @@
         let streak = 0;
         let timer = null;
         let timeLeft = 1800; // 30 minutos
-        let stats = { xp: 0, stars: 0, level: 1, lastDate: null, savedProgress: null };
+        let stats = { xp: 0, stars: 0, level: 1 };
         let speechSynth = window.speechSynthesis;
         let voices = [];
 
@@ -463,9 +644,8 @@
             const utterance = new SpeechSynthesisUtterance(currentExercise.q);
             utterance.lang = 'es-ES';
             utterance.rate = 0.9;
-            utterance.pitch = 0.9; // Voz más grave (masculina)
+            utterance.pitch = 0.9;
             
-            // Buscar voz masculina en español
             const maleVoice = voices.find(v => 
                 v.lang.includes('es') && 
                 (v.name.includes('Male') || v.name.includes('Masculino') || !v.name.includes('Female'))
@@ -487,8 +667,15 @@
                 timeLeft--;
                 updateTimerDisplay();
                 
+                // Alerta cuando queda poco tiempo
+                if (timeLeft <= 300) { // 5 minutos
+                    document.getElementById('timer-display').classList.add('urgent');
+                }
+                
                 if (timeLeft <= 0) {
+                    clearInterval(timer);
                     finishSession(true);
+                    return;
                 }
                 
                 // Guardar progreso cada minuto
@@ -503,6 +690,12 @@
             const secs = timeLeft % 60;
             document.getElementById('timer-text').textContent = 
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            
+            // Actualizar info del tiempo restante en categorías
+            const dailyInfo = document.getElementById('daily-time-info');
+            if (dailyInfo) {
+                dailyInfo.textContent = `⏱️ Tiempo restante hoy: ${mins}m ${secs}s de 30 min`;
+            }
         }
 
         // GUARDAR PROGRESO
@@ -519,17 +712,23 @@
                 stats,
                 savedAt: new Date().toISOString()
             };
-            localStorage.setItem('mathquest_peru_progress', JSON.stringify(progress));
-            localStorage.setItem('mathquest_peru_lastdate', new Date().toDateString());
+            localStorage.setItem('mq_progress', JSON.stringify(progress));
+        }
+
+        // GUARDAR ESTADÍSTICAS DE SESIÓN
+        function saveSessionStats() {
+            const sessionStats = {
+                xp: stats.xp,
+                correct: correctCount,
+                level: stats.level
+            };
+            localStorage.setItem('mq_session_stats', JSON.stringify(sessionStats));
         }
 
         // CARGAR PROGRESO
         function loadProgress() {
-            const saved = localStorage.getItem('mathquest_peru_progress');
-            const lastDate = localStorage.getItem('mathquest_peru_lastdate');
-            const today = new Date().toDateString();
-            
-            if (saved && lastDate === today) {
+            const saved = localStorage.getItem('mq_progress');
+            if (saved) {
                 const progress = JSON.parse(saved);
                 user = progress.user;
                 userAge = progress.userAge;
@@ -549,7 +748,51 @@
             return GRADE_LEVELS[age.toString()] || { level: 'Desconocido', grade: '', category: 'primaria_baja' };
         }
 
+        // MOSTRAR PANTALLA DE BLOQUEO
+        function showBlockedScreen() {
+            const sessionStats = getBlockedSessionStats();
+            document.getElementById('blocked-xp').textContent = sessionStats.xp;
+            document.getElementById('blocked-correct').textContent = sessionStats.correct;
+            document.getElementById('blocked-level').textContent = sessionStats.level;
+            
+            // Ocultar todas las pantallas
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('category-screen').classList.add('hidden');
+            document.getElementById('exercise-screen').classList.add('hidden');
+            document.getElementById('timer-display').classList.remove('active');
+            document.getElementById('streak-display').classList.remove('show');
+            
+            // Mostrar pantalla de bloqueo
+            document.getElementById('blocked-screen').classList.remove('hidden');
+            
+            // Calcular tiempo hasta mañana
+            updateTimeUntilUnlock();
+            setInterval(updateTimeUntilUnlock, 60000); // Actualizar cada minuto
+        }
+
+        function updateTimeUntilUnlock() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(0, 0, 0, 0);
+            
+            const diff = tomorrow - now;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            const timeText = document.getElementById('time-until-unlock');
+            if (timeText) {
+                timeText.textContent = `Vuelve en ${hours}h ${minutes}min`;
+            }
+        }
+
         function selectCategory(cat) {
+            // Verificar si está bloqueado antes de permitir entrar
+            if (isBlocked()) {
+                showBlockedScreen();
+                return;
+            }
+
             currentCategory = cat;
             if (!askedQuestions[cat]) askedQuestions[cat] = [];
             
@@ -565,14 +808,14 @@
             const bank = QUESTION_BANK[currentCategory][gradeCategory] || QUESTION_BANK[currentCategory]['primaria_baja'];
             const asked = askedQuestions[currentCategory] || [];
             
-            // Filtrar preguntas no hechas
             const available = bank.filter((_, idx) => !asked.includes(idx));
             
-            // Si se acabaron, reiniciar
             if (available.length === 0) {
                 askedQuestions[currentCategory] = [];
                 asked.length = 0;
-                return bank[Math.floor(Math.random() * bank.length)];
+                const randomIdx = Math.floor(Math.random() * bank.length);
+                askedQuestions[currentCategory].push(randomIdx);
+                return bank[randomIdx];
             }
             
             const randomIdx = Math.floor(Math.random() * available.length);
@@ -603,21 +846,77 @@
             const optsContainer = document.getElementById('options-container');
             optsContainer.innerHTML = '';
             
-            ex.opts.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                
-                if (currentExercise.type === 'color') {
-                    btn.innerHTML = `<span class="color-circle" style="background: ${getColorHex(opt)}"></span>${opt}`;
-                } else {
-                    btn.textContent = opt;
-                }
-                
-                btn.onclick = () => handleAnswer(opt, btn);
-                optsContainer.appendChild(btn);
-            });
+            if (ex.type === 'animal_sound') {
+                ex.opts.forEach(opt => {
+                    const animal = ANIMALS[opt];
+                    const btn = document.createElement('div');
+                    btn.className = 'animal-option';
+                    btn.innerHTML = animal.emoji;
+                    btn.onclick = () => handleAnimalAnswer(opt, btn);
+                    optsContainer.appendChild(btn);
+                });
+            } else {
+                ex.opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    
+                    if (currentExercise.type === 'color') {
+                        btn.innerHTML = `<span style="display:inline-block;width:32px;height:32px;background:${getColorHex(opt)};border-radius:50%;margin-right:12px"></span>${opt}`;
+                    } else if (ex.type === 'count') {
+                        btn.className += ' number-option';
+                        btn.textContent = opt;
+                    } else {
+                        btn.textContent = opt;
+                    }
+                    
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    optsContainer.appendChild(btn);
+                });
+            }
             
             document.getElementById('feedback-container').innerHTML = '';
+        }
+
+        function handleAnimalAnswer(value, btn) {
+            if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
+            
+            const isCorrect = String(value) === String(currentExercise.ans);
+            
+            if (isCorrect) {
+                btn.classList.add('selected');
+                correctCount++;
+                streak++;
+                playSound('correct');
+                updateStreak();
+            } else {
+                btn.classList.add('wrong');
+                streak = 0;
+                playSound('wrong');
+                updateStreak();
+                setTimeout(() => {
+                    const allBtns = document.querySelectorAll('.animal-option');
+                    allBtns.forEach(b => {
+                        const animalKey = Object.keys(ANIMALS).find(k => ANIMALS[k].emoji === b.innerHTML);
+                        if (animalKey === currentExercise.ans) {
+                            b.classList.add('selected');
+                        }
+                    });
+                }, 300);
+            }
+            
+            const feedback = document.getElementById('feedback-container');
+            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
+                ${isCorrect ? '¡Excelente! 🎉' : '💪 ¡Sigue intentando!'}
+            </div>`;
+            
+            setTimeout(() => {
+                if (questionNum >= 10) {
+                    finishSession(false);
+                } else {
+                    questionNum++;
+                    nextQuestion();
+                }
+            }, 1500);
         }
 
         function getColorHex(colorName) {
@@ -674,7 +973,6 @@
         }
 
         function playSound(type) {
-            // Sonidos simples con Web Audio API
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             const audioCtx = new AudioContext();
             const osc = audioCtx.createOscillator();
@@ -707,31 +1005,39 @@
             document.getElementById('timer-display').classList.remove('active');
             document.getElementById('streak-display').classList.remove('show');
             
-            saveProgress();
+            // Guardar estadísticas de sesión
+            saveSessionStats();
+            
+            // BLOQUEAR acceso hasta mañana
+            setBlocked();
             
             const xpGain = correctCount * 10;
             stats.xp += xpGain;
             stats.level = Math.floor(stats.xp / 100) + 1;
             
             let message = timeOut ? 
-                '¡Se acabó el tiempo!\n\n' : 
-                '¡Sesión completada!\n\n';
+                '⏰ ¡Se acabó el tiempo!\n\n' : 
+                '🎉 ¡Sesión completada!\n\n';
             message += `Correctas: ${correctCount}/10\n`;
             message += `XP ganados: ${xpGain}\n`;
             message += `Nivel: ${stats.level}\n\n`;
-            message += 'Tu progreso se ha guardado.\n';
-            message += '¡Vuelve mañana para continuar! 🇵';
+            message += 'Has usado tus 30 minutos de hoy.\n';
+            message += 'La plataforma se bloqueará hasta mañana.\n';
+            message += '¡Vuelve mañana para seguir aprendiendo! 🇵';
             
             alert(message);
             
-            // Limpiar progreso del día
-            localStorage.removeItem('mathquest_peru_progress');
-            localStorage.removeItem('mathquest_peru_lastdate');
-            
-            showCategories();
+            // Mostrar pantalla de bloqueo
+            showBlockedScreen();
         }
 
         function showCategories() {
+            // Verificar bloqueo antes de mostrar categorías
+            if (isBlocked()) {
+                showBlockedScreen();
+                return;
+            }
+            
             clearInterval(timer);
             document.getElementById('timer-display').classList.remove('active');
             document.getElementById('exercise-screen').classList.add('hidden');
@@ -739,7 +1045,7 @@
         }
 
         function showScreen(id) {
-            ['login-screen', 'category-screen', 'exercise-screen'].forEach(sid => {
+            ['login-screen', 'category-screen', 'exercise-screen', 'blocked-screen'].forEach(sid => {
                 document.getElementById(sid).classList.add('hidden');
             });
             document.getElementById(id).classList.remove('hidden');
@@ -758,6 +1064,12 @@
         });
 
         document.getElementById('start-btn').onclick = () => {
+            // Verificar si está bloqueado ANTES de permitir login
+            if (isBlocked()) {
+                showBlockedScreen();
+                return;
+            }
+
             const name = document.getElementById('name-input').value.trim();
             const age = parseInt(document.getElementById('age-input').value);
             
@@ -777,9 +1089,19 @@
             showScreen('category-screen');
         };
 
-        // Verificar si hay progreso guardado al cargar
+        // VERIFICAR AL CARGAR LA PÁGINA
         window.onload = () => {
             loadVoices();
+            
+            // Primero verificar si está bloqueado
+            if (isBlocked()) {
+                // Si está bloqueado, intentar cargar datos para mostrar estadísticas
+                loadProgress();
+                showBlockedScreen();
+                return;
+            }
+            
+            // Si no está bloqueado, verificar progreso guardado
             const hasProgress = loadProgress();
             if (hasProgress && user) {
                 document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
