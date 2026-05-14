@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adrik Math Quest - Aprende Jugando</title>
+    <title>Adrik Math Quest - Nivel Inicial (3-6 años)</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,12 +19,14 @@
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
         @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
         @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+        @keyframes connect { 0%{stroke-dasharray:1000;stroke-dashoffset:1000} 100%{stroke-dasharray:1000;stroke-dashoffset:0} }
 
         .float { animation: float 3s ease-in-out infinite; }
         .pop { animation: pop 0.4s ease-out; }
         .shake { animation: shake 0.5s; }
         .bounce { animation: bounce 2s ease-in-out infinite; }
         .pulse { animation: pulse 2s ease-in-out infinite; }
+        .connect-anim { animation: connect 1s ease-out forwards; }
 
         .category-card {
             background: white;
@@ -38,6 +40,7 @@
             margin: 0 auto;
         }
         .category-card:hover { transform: translateY(-8px) scale(1.02); }
+        .category-card.selected { border: 4px solid #2ECC71; background: #E8F8F0; }
 
         .category-icon {
             width: 120px;
@@ -66,6 +69,23 @@
             color: white;
             box-shadow: 0 8px 24px rgba(102,126,234,0.4);
         }
+        .btn-level {
+            padding: 16px 24px;
+            border-radius: 16px;
+            border: 3px solid;
+            font-family: 'Nunito';
+            font-weight: 800;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+            min-width: 140px;
+        }
+        .btn-level.simple { border-color: #2ECC71; background: #E8F8F0; color: #27AE60; }
+        .btn-level.medio { border-color: #F39C12; background: #FEF5E7; color: #D35400; }
+        .btn-level.dificil { border-color: #E74C3C; background: #FDEDEC; color: #C0392B; }
+        .btn-level:hover { transform: scale(1.05); }
+        .btn-level.selected { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
 
         .option-btn {
             background: white;
@@ -126,7 +146,6 @@
             transition: all 0.3s;
         }
         .animal-sound-btn:hover { transform: scale(1.1); }
-        .animal-sound-btn:active { transform: scale(0.95); }
 
         .streak-display {
             position: fixed;
@@ -178,7 +197,6 @@
             justify-content: center;
             font-size: 80px;
             background: white;
-            position: relative;
         }
         .animal-option:hover { border-color: #3498DB; transform: scale(1.05); }
         .animal-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
@@ -318,6 +336,100 @@
         .vowel-option:hover { transform: scale(1.1); }
         .vowel-option.selected { background: #2ECC71; transform: scale(1.15); }
         .vowel-option.wrong { background: #E74C3C; animation: shake 0.5s; }
+
+        /* CONECTA LOS PUNTOS STYLES */
+        .connect-dots-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .dots-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .dot:hover { transform: scale(1.1); }
+        .dot.selected { background: #2ECC71; transform: scale(1.15); }
+        .dot.connected { 
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            animation: pop 0.3s ease-out;
+        }
+
+        .connect-svg {
+            width: 300px;
+            height: 200px;
+            margin: 10px 0;
+        }
+
+        .connect-line {
+            stroke: #667eea;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        /* LEVEL SELECTOR */
+        .level-selector {
+            background: rgba(255,255,255,0.95);
+            border-radius: 24px;
+            padding: 24px;
+            margin: 20px auto;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .level-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #2C3E50;
+            margin-bottom: 16px;
+        }
+
+        .level-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* PROGRESS */
+        .level-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+        .progress-dot.active { background: #667eea; }
+        .progress-dot.completed { background: #2ECC71; }
     </style>
 </head>
 <body>
@@ -333,16 +445,53 @@
             <div class="login-header">
                 <div class="logo-emoji bounce">🎓🧮✨</div>
                 <h1 class="app-title">ADRIK MATH QUEST</h1>
-                <p class="app-subtitle">Aprende matemáticas jugando 🎯</p>
+                <p class="app-subtitle">Para niños de 3 a 6 años 🎈</p>
             </div>
             
             <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
             
-            <input id="age-input" type="number" placeholder="Tu edad (3-14)" min="3" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
+            <input id="age-input" type="number" placeholder="Tu edad (3-6)" min="3" max="6" value="4" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
             
-            <div id="grade-display" style="background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 24px; font-weight: 700; color: #667eea;"></div>
+            <div id="grade-display" style="background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 24px; font-weight: 700; color: #667eea;">Inicial - 4 años</div>
             
             <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar Aventura!</button>
+        </div>
+    </div>
+
+    <!-- LEVEL SELECTOR SCREEN -->
+    <div id="level-screen" class="hidden" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 500px; width: 100%; text-align: center;">
+            <div class="logo-emoji float">🎓🧮✨</div>
+            <h1 id="level-greeting" style="font-size: 32px; font-weight: 900; color: #2C3E50; margin-bottom: 24px;"></h1>
+            
+            <div class="level-selector">
+                <div class="level-title">Elige tu nivel:</div>
+                <div class="level-buttons">
+                    <button class="btn-level simple selected" onclick="selectLevel('simple')">
+                        🌟 Simple
+                    </button>
+                    <button class="btn-level medio" onclick="selectLevel('medio')">
+                        ⭐ Medio
+                    </button>
+                    <button class="btn-level dificil" onclick="selectLevel('dificil')">
+                        🔥 Difícil
+                    </button>
+                </div>
+            </div>
+            
+            <div class="level-progress">
+                <div class="progress-dot active"></div>
+                <div class="progress-dot"></div>
+                <div class="progress-dot"></div>
+            </div>
+            
+            <p style="color: #7F8C8D; font-size: 14px; margin-top: 20px;">
+                💡 Empieza con Simple y avanza cuando estés listo
+            </p>
+            
+            <button id="start-level-btn" class="btn btn-primary" style="width: 100%; font-size: 18px; margin-top: 20px;">
+                🎮 ¡Jugar Ahora!
+            </button>
         </div>
     </div>
 
@@ -352,33 +501,33 @@
             <div class="category-header">
                 <div class="category-logo-emoji float">🎓🧮✨</div>
                 <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
-                <div id="grade-info" style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700; display: inline-block;">
+                <div id="level-badge" style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 8px 20px; border-radius: 16px; font-weight: 700; display: inline-block; margin-bottom: 16px;">
                 </div>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
-                <div class="category-card" onclick="selectCategory('matematicas')">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">📐</div>
-                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Matemáticas</h2>
-                    <p style="color: #7F8C8D;">Números, operaciones, geometría y resolución de problemas</p>
+                <div class="category-card" onclick="selectCategory('vocales')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #FFEAA7, #FDCB6E);">🅰️</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Vocales</h2>
+                    <p style="color: #7F8C8D;">Aprende A, E, I, O, U con juegos divertidos</p>
                 </div>
 
-                <div class="category-card" onclick="selectCategory('lectura')">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">📚</div>
-                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Lectura</h2>
-                    <p style="color: #7F8C8D;">Comprensión lectora, vocabulario y ortografía</p>
+                <div class="category-card" onclick="selectCategory('animales')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #55EFC4, #00B894);">🦁</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Animales</h2>
+                    <p style="color: #7F8C8D;">Sonidos y nombres de animales</p>
                 </div>
 
-                <div class="category-card" onclick="selectCategory('coding')">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">💻</div>
-                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Coding</h2>
-                    <p style="color: #7F8C8D;">Pensamiento computacional y lógica de programación</p>
+                <div class="category-card" onclick="selectCategory('numeros')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #74B9FF, #0984E3);">🔢</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Números</h2>
+                    <p style="color: #7F8C8D;">Conteo del 1 al 10 con objetos</p>
                 </div>
 
-                <div class="category-card" onclick="selectCategory('thinking')">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">🧩</div>
-                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Thinking</h2>
-                    <p style="color: #7F8C8D;">Razonamiento lógico y pensamiento crítico</p>
+                <div class="category-card" onclick="selectCategory('colores')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #FD79A8, #E84393);">🎨</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Colores</h2>
+                    <p style="color: #7F8C8D;">Reconoce y nombra los colores</p>
                 </div>
             </div>
         </div>
@@ -404,20 +553,12 @@
     </div>
 
     <script>
-        // CURRÍCULO PERUANO POR NIVELES
-        const GRADE_LEVELS = {
-            '3': { level: 'Inicial', grade: '3 años', category: 'inicial' },
-            '4': { level: 'Inicial', grade: '4 años', category: 'inicial' },
-            '5': { level: 'Inicial', grade: '5 años', category: 'inicial' },
-            '6': { level: 'Primaria', grade: '1° grado', category: 'primaria_baja' },
-            '7': { level: 'Primaria', grade: '2° grado', category: 'primaria_baja' },
-            '8': { level: 'Primaria', grade: '3° grado', category: 'primaria_media' },
-            '9': { level: 'Primaria', grade: '4° grado', category: 'primaria_media' },
-            '10': { level: 'Primaria', grade: '5° grado', category: 'primaria_alta' },
-            '11': { level: 'Primaria', grade: '6° grado', category: 'primaria_alta' },
-            '12': { level: 'Secundaria', grade: '1° año', category: 'secundaria' },
-            '13': { level: 'Secundaria', grade: '2° año', category: 'secundaria' },
-            '14': { level: 'Secundaria', grade: '3° año', category: 'secundaria' }
+        // CONFIGURACIÓN SOLO PARA 3-6 AÑOS
+        const AGE_CONFIG = {
+            '3': { level: 'Inicial', grade: '3 años' },
+            '4': { level: 'Inicial', grade: '4 años' },
+            '5': { level: 'Inicial', grade: '5 años' },
+            '6': { level: 'Inicial', grade: '6 años' }
         };
 
         // ANIMALES CON SUS SONIDOS
@@ -455,7 +596,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.5);
                     break;
-                    
                 case 'gato':
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(800, now);
@@ -465,7 +605,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.3);
                     break;
-                    
                 case 'perro':
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(400, now);
@@ -475,7 +614,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.2);
                     break;
-                    
                 case 'vaca':
                     oscillator.type = 'sawtooth';
                     oscillator.frequency.setValueAtTime(300, now);
@@ -486,7 +624,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.8);
                     break;
-                    
                 case 'pollo':
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(600, now);
@@ -497,7 +634,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.3);
                     break;
-                    
                 case 'oveja':
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(500, now);
@@ -507,7 +643,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.4);
                     break;
-                    
                 case 'pato':
                     oscillator.type = 'square';
                     oscillator.frequency.setValueAtTime(400, now);
@@ -516,7 +651,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.2);
                     break;
-                    
                 case 'caballo':
                     oscillator.type = 'sawtooth';
                     oscillator.frequency.setValueAtTime(600, now);
@@ -527,7 +661,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.6);
                     break;
-                    
                 case 'cerdo':
                     oscillator.type = 'sawtooth';
                     oscillator.frequency.setValueAtTime(200, now);
@@ -537,7 +670,6 @@
                     oscillator.start(now);
                     oscillator.stop(now + 0.2);
                     break;
-                    
                 case 'rana':
                     oscillator.type = 'sine';
                     oscillator.frequency.setValueAtTime(400, now);
@@ -550,139 +682,134 @@
             }
         }
 
-        // BANCO DE PREGUNTAS CON EJERCICIOS DE VOCALES ESTILO ARBOLABC
+        // BANCO DE PREGUNTAS POR NIVEL - SOLO 3-6 AÑOS
         const QUESTION_BANK = {
-            matematicas: {
-                inicial: [
-                    { id: 'm_ini_1', q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 2, opts: [1, 2, 3] },
-                    { id: 'm_ini_2', q: '¿Cuántos hay?', visual: '⭐⭐⭐', type: 'count', ans: 3, opts: [2, 3, 4] },
-                    { id: 'm_ini_3', q: '¿Cuántos hay?', visual: '🎈🎈🎈🎈', type: 'count', ans: 4, opts: [3, 4, 5] },
-                    { id: 'm_ini_4', q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
-                    { id: 'm_ini_5', q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { id: 'm_ini_6', q: '¿Qué figura es?', visual: '🔺', type: 'shape', ans: 'triángulo', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { id: 'm_ini_7', q: '¿Qué figura es?', visual: '⬜', type: 'shape', ans: 'cuadrado', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { id: 'm_ini_8', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#E74C3C"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'amarillo'] },
-                    { id: 'm_ini_9', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#3498DB"></span>', type: 'color', ans: 'azul', opts: ['rojo', 'azul', 'verde'] },
-                    { id: 'm_ini_10', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#F1C40F"></span>', type: 'color', ans: 'amarillo', opts: ['rojo', 'azul', 'amarillo'] }
+            vocales: {
+                simple: [
+                    { id: 'v_s_1', q: '¿Qué vocal es?', visual: '<span class="vowel-display">A</span>', type: 'vowel', ans: 'A', opts: ['A', 'E', 'I'] },
+                    { id: 'v_s_2', q: '¿Qué vocal es?', visual: '<span class="vowel-display">E</span>', type: 'vowel', ans: 'E', opts: ['A', 'E', 'O'] },
+                    { id: 'v_s_3', q: '¿Qué vocal es?', visual: '<span class="vowel-display">I</span>', type: 'vowel', ans: 'I', opts: ['E', 'I', 'O'] },
+                    { id: 'v_s_4', q: '¿Qué vocal es?', visual: '<span class="vowel-display">O</span>', type: 'vowel', ans: 'O', opts: ['I', 'O', 'U'] },
+                    { id: 'v_s_5', q: '¿Qué vocal es?', visual: '<span class="vowel-display">U</span>', type: 'vowel', ans: 'U', opts: ['O', 'U', 'A'] },
+                    { id: 'v_s_6', q: 'Toca la vocal A', visual: '', type: 'vowel_touch', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_s_7', q: 'Toca la vocal E', visual: '', type: 'vowel_touch', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_s_8', q: 'Toca la vocal I', visual: '', type: 'vowel_touch', ans: 'I', opts: ['A', 'E', 'I', 'O', 'U'] }
                 ],
-                primaria_baja: [
-                    { id: 'm_pb_1', q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
-                    { id: 'm_pb_2', q: '9 - 4 = ?', visual: '', type: 'sub', ans: 5, opts: [4, 5, 6, 7] },
-                    { id: 'm_pb_3', q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
-                    { id: 'm_pb_4', q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
-                    { id: 'm_pb_5', q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] },
-                    { id: 'm_pb_6', q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] }
+                medio: [
+                    { id: 'v_m_1', q: 'Completa: M<span class="vowel-blank"></span>SA', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'MESA' },
+                    { id: 'v_m_2', q: 'Completa: P<span class="vowel-blank"></span>LO', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'PALO' },
+                    { id: 'v_m_3', q: 'Completa: L<span class="vowel-blank"></span>NA', type: 'vowel_word', ans: 'U', opts: ['A', 'E', 'I', 'O', 'U'], word: 'LUNA' },
+                    { id: 'v_m_4', q: 'Completa: S<span class="vowel-blank"></span>L', type: 'vowel_word', ans: 'O', opts: ['A', 'E', 'I', 'O', 'U'], word: 'SOL' },
+                    { id: 'v_m_5', q: 'Completa: M<span class="vowel-blank"></span>NO', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'MANO' },
+                    { id: 'v_m_6', q: '¿Con qué vocal empieza MANZANA?', visual: '🍎', type: 'vowel_start', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_m_7', q: '¿Con qué vocal empieza ELEFANTE?', visual: '🐘', type: 'vowel_start', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_m_8', q: '¿Con qué vocal empieza IGLESIA?', visual: '⛪', type: 'vowel_start', ans: 'I', opts: ['A', 'E', 'I', 'O', 'U'] }
                 ],
-                primaria_media: [
-                    { id: 'm_pm_1', q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
-                    { id: 'm_pm_2', q: '24 ÷ 4 = ?', visual: '', type: 'div', ans: 6, opts: [5, 6, 7, 8] },
-                    { id: 'm_pm_3', q: '¿Cuántos minutos tiene una hora?', visual: '⏰', type: 'time', ans: 60, opts: [30, 45, 60, 90] },
-                    { id: 'm_pm_4', q: '15 + 27 = ?', visual: '', type: 'add', ans: 42, opts: [40, 42, 44, 45] },
-                    { id: 'm_pm_5', q: '¿Qué fracción es mayor?', visual: '½ vs ¼', type: 'fraction', ans: '½', opts: ['½', '¼', 'son iguales'] }
-                ],
-                primaria_alta: [
-                    { id: 'm_pa_1', q: '12 × 8 = ?', visual: '', type: 'mul', ans: 96, opts: [86, 96, 106, 88] },
-                    { id: 'm_pa_2', q: '144 ÷ 12 = ?', visual: '', type: 'div', ans: 12, opts: [10, 11, 12, 13] },
-                    { id: 'm_pa_3', q: '¿Cuántos grados tiene un ángulo recto?', visual: '∟', type: 'geometry', ans: 90, opts: [45, 90, 180, 360] },
-                    { id: 'm_pa_4', q: '3/4 + 1/4 = ?', visual: '', type: 'fraction', ans: 1, opts: ['1/2', '1', '3/4', '2'] },
-                    { id: 'm_pa_5', q: 'El perímetro de un cuadrado de lado 5 cm es:', visual: '', type: 'geometry', ans: 20, opts: [15, 20, 25, 30] }
-                ],
-                secundaria: [
-                    { id: 'm_sec_1', q: '2x + 5 = 13. ¿Cuánto vale x?', visual: '', type: 'algebra', ans: 4, opts: [3, 4, 5, 6] },
-                    { id: 'm_sec_2', q: '√81 = ?', visual: '', type: 'algebra', ans: 9, opts: [8, 9, 10, 11] },
-                    { id: 'm_sec_3', q: '(-3) × (-4) = ?', visual: '', type: 'algebra', ans: 12, opts: [-12, 12, -7, 7] },
-                    { id: 'm_sec_4', q: '¿Cuánto es el 25% de 200?', visual: '', type: 'percent', ans: 50, opts: [25, 50, 75, 100] },
-                    { id: 'm_sec_5', q: 'Si a=3 y b=5, ¿cuánto es a² + b?', visual: '', type: 'algebra', ans: 14, opts: [11, 14, 16, 19] }
+                dificil: [
+                    { id: 'v_d_1', q: 'Conecta los puntos en orden: A → E → I', type: 'connect_vowels', ans: ['A','E','I'], opts: ['A','E','I','O','U'], dots: ['A','E','I'] },
+                    { id: 'v_d_2', q: 'Conecta los puntos en orden: O → U → A', type: 'connect_vowels', ans: ['O','U','A'], opts: ['A','E','I','O','U'], dots: ['O','U','A'] },
+                    { id: 'v_d_3', q: '¿Qué vocal falta? A, __, I, O, U', type: 'vowel_sequence', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_d_4', q: '¿Qué vocal falta? E, I, __, U, A', type: 'vowel_sequence', ans: 'O', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_d_5', q: 'Ordena: I, A, E → A, __, I', type: 'vowel_order', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'] },
+                    { id: 'v_d_6', q: '¿Cuántas vocales tiene "CASA"?', visual: '🏠', type: 'vowel_count', ans: 2, opts: [1, 2, 3] },
+                    { id: 'v_d_7', q: '¿Cuántas vocales tiene "PELOTA"?', visual: '⚽', type: 'vowel_count', ans: 3, opts: [2, 3, 4] },
+                    { id: 'v_d_8', q: '¿Qué palabra tiene la vocal O?', visual: '', type: 'vowel_in_word', ans: 'SOL', opts: ['SOL', 'MES', 'LUZ'] }
                 ]
             },
-            lectura: {
-                inicial: [
-                    // EJERCICIOS DE VOCALES ESTILO ARBOLABC
-                    { id: 'l_ini_1', q: '¿Qué vocal es?', visual: '<span class="vowel-display">A</span>', type: 'vowel', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'] },
-                    { id: 'l_ini_2', q: '¿Qué vocal es?', visual: '<span class="vowel-display">E</span>', type: 'vowel', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'] },
-                    { id: 'l_ini_3', q: '¿Qué vocal es?', visual: '<span class="vowel-display">I</span>', type: 'vowel', ans: 'I', opts: ['A', 'E', 'I', 'O', 'U'] },
-                    { id: 'l_ini_4', q: '¿Qué vocal es?', visual: '<span class="vowel-display">O</span>', type: 'vowel', ans: 'O', opts: ['A', 'E', 'I', 'O', 'U'] },
-                    { id: 'l_ini_5', q: '¿Qué vocal es?', visual: '<span class="vowel-display">U</span>', type: 'vowel', ans: 'U', opts: ['A', 'E', 'I', 'O', 'U'] },
-                    { id: 'l_ini_6', q: 'Completa la palabra: M<span class="vowel-blank"></span>SA', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'MESA' },
-                    { id: 'l_ini_7', q: 'Completa la palabra: P<span class="vowel-blank"></span>LO', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'PALO' },
-                    { id: 'l_ini_8', q: 'Completa la palabra: L<span class="vowel-blank"></span>NA', type: 'vowel_word', ans: 'U', opts: ['A', 'E', 'I', 'O', 'U'], word: 'LUNA' },
-                    { id: 'l_ini_9', q: 'Completa la palabra: S<span class="vowel-blank"></span>L', type: 'vowel_word', ans: 'O', opts: ['A', 'E', 'I', 'O', 'U'], word: 'SOL' },
-                    { id: 'l_ini_10', q: 'Completa la palabra: M<span class="vowel-blank"></span>NO', type: 'vowel_word', ans: 'A', opts: ['A', 'E', 'I', 'O', 'U'], word: 'MANO' },
-                    { id: 'l_ini_11', q: '¿Con qué vocal empieza?', visual: '🍎', type: 'vowel_start', ans: 'M', opts: ['A', 'E', 'I', 'O', 'U'], word: 'MANZANA' },
-                    { id: 'l_ini_12', q: '¿Con qué vocal empieza?', visual: '🐘', type: 'vowel_start', ans: 'E', opts: ['A', 'E', 'I', 'O', 'U'], word: 'ELEFANTE' },
-                    { id: 'l_ini_13', q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'], playSound: true },
-                    { id: 'l_ini_14', q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'], playSound: true },
-                    { id: 'l_ini_15', q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'], playSound: true }
+            animales: {
+                simple: [
+                    { id: 'a_s_1', q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'], playSound: true },
+                    { id: 'a_s_2', q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'], playSound: true },
+                    { id: 'a_s_3', q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'], playSound: true },
+                    { id: 'a_s_4', q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'], playSound: true },
+                    { id: 'a_s_5', q: '¿Qué animal hace este sonido?', visual: '🐔', type: 'animal_sound', ans: 'pollo', opts: ['pato', 'pollo', 'gallo'], playSound: true },
+                    { id: 'a_s_6', q: 'Toca el león', visual: '', type: 'animal_touch', ans: 'leon', opts: ['leon', 'gato', 'perro', 'vaca'] },
+                    { id: 'a_s_7', q: 'Toca el gato', visual: '', type: 'animal_touch', ans: 'gato', opts: ['gato', 'perro', 'vaca', 'oveja'] },
+                    { id: 'a_s_8', q: 'Toca el perro', visual: '', type: 'animal_touch', ans: 'perro', opts: ['gato', 'perro', 'vaca', 'pato'] }
                 ],
-                primaria_baja: [
-                    { id: 'l_pb_1', q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
-                    { id: 'l_pb_2', q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
-                    { id: 'l_pb_3', q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
-                    { id: 'l_pb_4', q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] }
+                medio: [
+                    { id: 'a_m_1', q: '¿Dónde vive el león?', visual: '🦁', type: 'animal_habitat', ans: 'Sabana', opts: ['Sabana', 'Océano', 'Cielo'] },
+                    { id: 'a_m_2', q: '¿Dónde vive el pez?', visual: '🐠', type: 'animal_habitat', ans: 'Océano', opts: ['Sabana', 'Océano', 'Bosque'] },
+                    { id: 'a_m_3', q: '¿Dónde vive el pájaro?', visual: '🐦', type: 'animal_habitat', ans: 'Cielo', opts: ['Océano', 'Cielo', 'Sabana'] },
+                    { id: 'a_m_4', q: '¿Qué animal dice "muuu"?', visual: '', type: 'animal_sound_name', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'] },
+                    { id: 'a_m_5', q: '¿Qué animal dice "cuac cuac"?', visual: '', type: 'animal_sound_name', ans: 'pato', opts: ['pato', 'pollo', 'gallo'] },
+                    { id: 'a_m_6', q: '¿Cuál es el bebé del gato?', visual: '🐱', type: 'animal_baby', ans: 'gatito', opts: ['gatito', 'perrito', 'pollito'] },
+                    { id: 'a_m_7', q: '¿Cuál es el bebé de la vaca?', visual: '🐮', type: 'animal_baby', ans: 'ternero', opts: ['ternero', 'cordero', 'potro'] },
+                    { id: 'a_m_8', q: '¿Qué animal tiene trompa?', visual: '', type: 'animal_feature', ans: 'elefante', opts: ['elefante', 'jirafa', 'león'] }
                 ],
-                primaria_media: [
-                    { id: 'l_pm_1', q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
-                    { id: 'l_pm_2', q: '¿Qué tipo de palabra es "rápidamente"?', visual: '', type: 'grammar', ans: 'adverbio', opts: ['sustantivo', 'adjetivo', 'adverbio'] },
-                    { id: 'l_pm_3', q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] }
-                ],
-                primaria_alta: [
-                    { id: 'l_pa_1', q: '¿Cuál es el sujeto en: "María lee un libro"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
-                    { id: 'l_pa_2', q: '¿Qué figura literaria es: "Tus ojos son como estrellas"?', visual: '', type: 'literary', ans: 'símil', opts: ['metáfora', 'símil', 'hipérbole'] },
-                    { id: 'l_pa_3', q: 'La palabra "murciélago" tiene:', visual: '', type: 'spelling', ans: '5 sílabas', opts: ['4 sílabas', '5 sílabas', '6 sílabas'] }
-                ],
-                secundaria: [
-                    { id: 'l_sec_1', q: '¿Quién escribió "Los Comentarios Reales"?', visual: '', type: 'literature', ans: 'Inca Garcilaso', opts: ['Mario Vargas Llosa', 'Inca Garcilaso', 'César Vallejo'] },
-                    { id: 'l_sec_2', q: '¿Qué es una oración compuesta?', visual: '', type: 'grammar', ans: 'tiene 2+ verbos', opts: ['tiene 1 verbo', 'tiene 2+ verbos', 'no tiene verbo'] },
-                    { id: 'l_sec_3', q: 'El Romanticismo en Perú se caracteriza por:', visual: '', type: 'literature', ans: 'sentimentalismo', opts: ['racionalismo', 'sentimentalismo', 'realismo'] }
+                dificil: [
+                    { id: 'a_d_1', q: 'Ordena: pollito → gallina → ?', visual: '🐔', type: 'animal_life', ans: 'huevo', opts: ['huevo', 'pato', 'gallo'] },
+                    { id: 'a_d_2', q: '¿Qué animal NO vuela?', visual: '', type: 'animal_ability', ans: 'elefante', opts: ['elefante', 'águila', 'mariposa'] },
+                    { id: 'a_d_3', q: '¿Qué animal NADA en el mar?', visual: '🌊', type: 'animal_ability', ans: 'tiburón', opts: ['tiburón', 'león', 'águila'] },
+                    { id: 'a_d_4', q: '¿Cuál es un animal de granja?', visual: '', type: 'animal_type', ans: 'vaca', opts: ['vaca', 'león', 'tiburón'] },
+                    { id: 'a_d_5', q: '¿Cuál es un animal salvaje?', visual: '', type: 'animal_type', ans: 'león', opts: ['león', 'vaca', 'gato'] },
+                    { id: 'a_d_6', q: '¿Qué animal tiene rayas?', visual: '', type: 'animal_feature', ans: 'cebra', opts: ['cebra', 'elefante', 'jirafa'] },
+                    { id: 'a_d_7', q: '¿Qué animal tiene cuello largo?', visual: '', type: 'animal_feature', ans: 'jirafa', opts: ['jirafa', 'elefante', 'león'] },
+                    { id: 'a_d_8', q: '¿Qué animal es el rey de la selva?', visual: '👑', type: 'animal_king', ans: 'león', opts: ['león', 'tigre', 'elefante'] }
                 ]
             },
-            coding: {
-                inicial: [
-                    { id: 'c_ini_1', q: '¿Qué viene después?', visual: '🔴 🔵 🔴 ?', type: 'pattern', ans: '🔵', opts: ['🔴', '', '🟢'] },
-                    { id: 'c_ini_2', q: 'Ordena: pequeño, mediano, ?', visual: '', type: 'sequence', ans: 'grande', opts: ['pequeño', 'mediano', 'grande'] }
+            numeros: {
+                simple: [
+                    { id: 'n_s_1', q: '¿Cuántos hay?', visual: '🍎', type: 'count', ans: 1, opts: [1, 2, 3] },
+                    { id: 'n_s_2', q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_s_3', q: '¿Cuántos hay?', visual: '🍎🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { id: 'n_s_4', q: '¿Cuántos dedos en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { id: 'n_s_5', q: '¿Cuántos hay?', visual: '⭐⭐', type: 'count', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_s_6', q: '¿Cuántos hay?', visual: '🎈🎈🎈', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { id: 'n_s_7', q: 'Cuenta: 1, 2, ¿qué sigue?', visual: '', type: 'sequence', ans: 3, opts: [2, 3, 4] },
+                    { id: 'n_s_8', q: 'Cuenta: 1, 2, 3, ¿qué sigue?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] }
                 ],
-                primaria_baja: [
-                    { id: 'c_pb_1', q: 'Si A=1, B=2, ¿C=?', visual: '', type: 'logic', ans: 3, opts: [2, 3, 4, 5] },
-                    { id: 'c_pb_2', q: 'Completa: 2, 4, 6, ?', visual: '', type: 'pattern', ans: 8, opts: [7, 8, 9, 10] },
-                    { id: 'c_pb_3', q: '¿Qué instrucción sigue?', visual: '➡️ ➡️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] }
+                medio: [
+                    { id: 'n_m_1', q: '¿Cuántos hay?', visual: '🍎🍎🍎🍎', type: 'count', ans: 4, opts: [3, 4, 5] },
+                    { id: 'n_m_2', q: '¿Cuántos hay?', visual: '⭐⭐⭐⭐⭐', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { id: 'n_m_3', q: '1 + 1 = ?', visual: '', type: 'add_simple', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_m_4', q: '2 + 1 = ?', visual: '', type: 'add_simple', ans: 3, opts: [2, 3, 4] },
+                    { id: 'n_m_5', q: '3 - 1 = ?', visual: '', type: 'sub_simple', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_m_6', q: '¿Qué número viene después del 4?', visual: '', type: 'sequence', ans: 5, opts: [4, 5, 6] },
+                    { id: 'n_m_7', q: '¿Qué número viene antes del 3?', visual: '', type: 'sequence', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_m_8', q: 'Cuenta de 2 en 2: 2, 4, ¿qué sigue?', visual: '', type: 'sequence_2', ans: 6, opts: [5, 6, 7] }
                 ],
-                primaria_media: [
-                    { id: 'c_pm_1', q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', type: 'pattern', ans: 7, opts: [6, 7, 8, 9] },
-                    { id: 'c_pm_2', q: 'Si x=5 y x>3, entonces...', visual: '', type: 'condition', ans: 'verdadero', opts: ['verdadero', 'falso'] },
-                    { id: 'c_pm_3', q: 'Ordena: 15, 8, 23 → ?', visual: '', type: 'algorithm', ans: '8, 15, 23', opts: ['23, 15, 8', '8, 15, 23', '15, 8, 23'] }
-                ],
-                primaria_alta: [
-                    { id: 'c_pa_1', q: 'En binario, 5 es:', visual: '', type: 'binary', ans: '101', opts: ['100', '101', '110', '111'] },
-                    { id: 'c_pa_2', q: 'Si A=verdadero y B=falso, A Y B =', visual: '', type: 'logic', ans: 'falso', opts: ['verdadero', 'falso'] },
-                    { id: 'c_pa_3', q: '¿Qué es un algoritmo?', visual: '', type: 'concept', ans: 'serie de pasos', opts: ['un número', 'serie de pasos', 'una figura'] }
-                ],
-                secundaria: [
-                    { id: 'c_sec_1', q: '¿Qué valor tiene x? x = 3 + 2 × 4', visual: '', type: 'algorithm', ans: 11, opts: [20, 11, 14, 9] },
-                    { id: 'c_sec_2', q: 'En Python, print(2**3) muestra:', visual: '', type: 'programming', ans: 8, opts: [6, 8, 9, 5] },
-                    { id: 'c_sec_3', q: '¿Qué es una variable?', visual: '', type: 'concept', ans: 'almacena datos', opts: ['un número fijo', 'almacena datos', 'una operación'] }
+                dificil: [
+                    { id: 'n_d_1', q: '¿Cuántos hay?', visual: '🍎🍎🍎🍎🍎', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { id: 'n_d_2', q: '2 + 2 = ?', visual: '', type: 'add_simple', ans: 4, opts: [3, 4, 5] },
+                    { id: 'n_d_3', q: '3 + 2 = ?', visual: '', type: 'add_simple', ans: 5, opts: [4, 5, 6] },
+                    { id: 'n_d_4', q: '4 - 2 = ?', visual: '', type: 'sub_simple', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_d_5', q: '5 - 1 = ?', visual: '', type: 'sub_simple', ans: 4, opts: [3, 4, 5] },
+                    { id: 'n_d_6', q: 'Cuenta de 2 en 2: 4, 6, ¿qué sigue?', visual: '', type: 'sequence_2', ans: 8, opts: [7, 8, 9] },
+                    { id: 'n_d_7', q: '¿Qué número falta? 1, __, 3, 4', visual: '', type: 'sequence', ans: 2, opts: [1, 2, 3] },
+                    { id: 'n_d_8', q: '¿Qué número falta? 2, 4, __, 8', visual: '', type: 'sequence_2', ans: 6, opts: [5, 6, 7] }
                 ]
             },
-            thinking: {
-                inicial: [
-                    { id: 't_ini_1', q: 'Tienes 2 manzanas y comes 1. ¿Cuántas quedan?', visual: '🍎🍎', type: 'problem', ans: 1, opts: [0, 1, 2] },
-                    { id: 't_ini_2', q: '¿Qué necesitas para ver de noche?', visual: '🌙', type: 'reasoning', ans: 'luz', opts: ['agua', 'luz', 'comida'] }
+            colores: {
+                simple: [
+                    { id: 'c_s_1', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#E74C3C"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_s_2', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#3498DB"></span>', type: 'color', ans: 'azul', opts: ['rojo', 'azul', 'verde'] },
+                    { id: 'c_s_3', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#F1C40F"></span>', type: 'color', ans: 'amarillo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_s_4', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#2ECC71"></span>', type: 'color', ans: 'verde', opts: ['azul', 'verde', 'amarillo'] },
+                    { id: 'c_s_5', q: 'Toca el color rojo', visual: '', type: 'color_touch', ans: 'rojo', opts: ['rojo', 'azul', 'amarillo', 'verde'] },
+                    { id: 'c_s_6', q: 'Toca el color azul', visual: '', type: 'color_touch', ans: 'azul', opts: ['rojo', 'azul', 'amarillo', 'verde'] },
+                    { id: 'c_s_7', q: 'Toca el color amarillo', visual: '', type: 'color_touch', ans: 'amarillo', opts: ['rojo', 'azul', 'amarillo', 'verde'] },
+                    { id: 'c_s_8', q: 'Toca el color verde', visual: '', type: 'color_touch', ans: 'verde', opts: ['rojo', 'azul', 'amarillo', 'verde'] }
                 ],
-                primaria_baja: [
-                    { id: 't_pb_1', q: 'Si hoy es lunes, mañana será...', visual: '', type: 'logic', ans: 'martes', opts: ['domingo', 'martes', 'miércoles'] },
-                    { id: 't_pb_2', q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', type: 'time', ans: '5:00', opts: ['4:00', '5:00', '6:00'] }
+                medio: [
+                    { id: 'c_m_1', q: '¿De qué color es la manzana?', visual: '🍎', type: 'color_object', ans: 'rojo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_m_2', q: '¿De qué color es el cielo?', visual: '☀️', type: 'color_object', ans: 'azul', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_m_3', q: '¿De qué color es el sol?', visual: '☀️', type: 'color_object', ans: 'amarillo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_m_4', q: '¿De qué color es la hoja?', visual: '🍃', type: 'color_object', ans: 'verde', opts: ['azul', 'verde', 'amarillo'] },
+                    { id: 'c_m_5', q: '¿Qué color es la mezcla de azul y amarillo?', visual: '', type: 'color_mix', ans: 'verde', opts: ['rojo', 'verde', 'morado'] },
+                    { id: 'c_m_6', q: '¿Qué color NO es primario?', visual: '', type: 'color_primary', ans: 'verde', opts: ['rojo', 'azul', 'verde'] },
+                    { id: 'c_m_7', q: '¿Cuál es un color frío?', visual: '', type: 'color_temp', ans: 'azul', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'c_m_8', q: '¿Cuál es un color cálido?', visual: '', type: 'color_temp', ans: 'amarillo', opts: ['azul', 'verde', 'amarillo'] }
                 ],
-                primaria_media: [
-                    { id: 't_pm_1', q: 'Ana tiene 8 años. Luis tiene 3 años más. ¿Cuántos años tiene Luis?', visual: '', type: 'problem', ans: 11, opts: [9, 11, 13, 15] },
-                    { id: 't_pm_2', q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', type: 'logic', ans: 4, opts: [2, 3, 4, 5] }
-                ],
-                primaria_alta: [
-                    { id: 't_pa_1', q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay?', visual: '🐄', type: 'problem', ans: 16, opts: [10, 12, 14, 16] },
-                    { id: 't_pa_2', q: 'Si 5 lápices cuestan S/10, ¿cuánto cuestan 3 lápices?', visual: '', type: 'problem', ans: 6, opts: [4, 6, 8, 10] }
-                ],
-                secundaria: [
-                    { id: 't_sec_1', q: 'Un artículo cuesta S/120 con 20% de descuento. ¿Cuánto pagas?', visual: '', type: 'problem', ans: 96, opts: [96, 100, 104, 110] },
-                    { id: 't_sec_2', q: 'Si 3 obreros hacen una obra en 12 días, ¿cuánto tardarán 6 obreros?', visual: '', type: 'reasoning', ans: 6, opts: [4, 6, 8, 24] },
-                    { id: 't_sec_3', q: 'La suma de 3 números consecutivos es 30. ¿Cuál es el mayor?', visual: '', type: 'algebra', ans: 11, opts: [9, 10, 11, 12] }
+                dificil: [
+                    { id: 'c_d_1', q: '¿Qué color resulta de mezclar rojo y amarillo?', visual: '', type: 'color_mix', ans: 'naranja', opts: ['verde', 'naranja', 'morado'] },
+                    { id: 'c_d_2', q: '¿Qué color resulta de mezclar rojo y azul?', visual: '', type: 'color_mix', ans: 'morado', opts: ['verde', 'naranja', 'morado'] },
+                    { id: 'c_d_3', q: '¿Cuál es el color del arcoíris que está entre rojo y amarillo?', visual: '🌈', type: 'color_rainbow', ans: 'naranja', opts: ['verde', 'naranja', 'azul'] },
+                    { id: 'c_d_4', q: '¿Cuántos colores tiene el arcoíris?', visual: '🌈', type: 'color_count', ans: 7, opts: [5, 6, 7] },
+                    { id: 'c_d_5', q: '¿Qué color es el opuesto del rojo?', visual: '', type: 'color_opposite', ans: 'verde', opts: ['azul', 'verde', 'amarillo'] },
+                    { id: 'c_d_6', q: '¿Qué color se usa para el luto en muchos países?', visual: '', type: 'color_culture', ans: 'negro', opts: ['blanco', 'negro', 'rojo'] },
+                    { id: 'c_d_7', q: '¿Qué color representa la esperanza?', visual: '', type: 'color_meaning', ans: 'verde', opts: ['rojo', 'verde', 'azul'] },
+                    { id: 'c_d_8', q: '¿Qué color es la esmeralda?', visual: '💎', type: 'color_gem', ans: 'verde', opts: ['rojo', 'verde', 'azul'] }
                 ]
             }
         };
@@ -690,7 +817,7 @@
         // ESTADO DE LA APP
         let user = null;
         let userAge = null;
-        let userGrade = null;
+        let currentLevel = 'simple';
         let currentCategory = null;
         let askedQuestions = {};
         let currentExercise = null;
@@ -700,6 +827,7 @@
         let stats = { xp: 0, stars: 0, level: 1 };
         let speechSynth = window.speechSynthesis;
         let voices = [];
+        let connectedDots = [];
 
         function loadVoices() {
             voices = speechSynth.getVoices();
@@ -716,8 +844,8 @@
             
             const utterance = new SpeechSynthesisUtterance(currentExercise.q);
             utterance.lang = 'es-ES';
-            utterance.rate = 0.9;
-            utterance.pitch = 0.9;
+            utterance.rate = 0.8;
+            utterance.pitch = 1.0;
             
             const maleVoice = voices.find(v => 
                 v.lang.includes('es') && 
@@ -731,33 +859,57 @@
             speechSynth.speak(utterance);
         }
 
+        function selectLevel(level) {
+            currentLevel = level;
+            
+            // Actualizar botones
+            document.querySelectorAll('.btn-level').forEach(btn => btn.classList.remove('selected'));
+            document.querySelector(`.btn-level.${level}`).classList.add('selected');
+            
+            // Actualizar progreso
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.remove('active', 'completed');
+                if (level === 'simple' && i === 0) dot.classList.add('active');
+                if (level === 'medio' && i === 1) dot.classList.add('active');
+                if (level === 'dificil' && i === 2) dot.classList.add('active');
+            });
+        }
+
+        function startFromLevel() {
+            document.getElementById('level-screen').classList.add('hidden');
+            document.getElementById('category-screen').classList.remove('hidden');
+        }
+
         function selectCategory(cat) {
             currentCategory = cat;
-            if (!askedQuestions[cat]) askedQuestions[cat] = [];
+            if (!askedQuestions[cat]) askedQuestions[cat] = {};
+            if (!askedQuestions[cat][currentLevel]) askedQuestions[cat][currentLevel] = [];
             
             document.getElementById('category-screen').classList.add('hidden');
             document.getElementById('exercise-screen').classList.remove('hidden');
+            
+            document.getElementById('level-badge').textContent = `Nivel: ${currentLevel === 'simple' ? '🌟 Simple' : currentLevel === 'medio' ? '⭐ Medio' : '🔥 Difícil'}`;
             
             nextQuestion();
         }
 
         function getNonRepeatingQuestion() {
-            const gradeCategory = getGradeInfo(userAge).category;
-            const bank = QUESTION_BANK[currentCategory][gradeCategory] || QUESTION_BANK[currentCategory]['primaria_baja'];
-            const asked = askedQuestions[currentCategory] || [];
+            const bank = QUESTION_BANK[currentCategory][currentLevel];
+            const asked = askedQuestions[currentCategory][currentLevel] || [];
             
             const available = bank.filter(q => !asked.includes(q.id));
             
             if (available.length === 0) {
-                askedQuestions[currentCategory] = [];
+                askedQuestions[currentCategory][currentLevel] = [];
                 const randomIdx = Math.floor(Math.random() * bank.length);
-                askedQuestions[currentCategory].push(bank[randomIdx].id);
+                askedQuestions[currentCategory][currentLevel].push(bank[randomIdx].id);
                 return bank[randomIdx];
             }
             
             const randomIdx = Math.floor(Math.random() * available.length);
             const selectedQuestion = available[randomIdx];
-            askedQuestions[currentCategory].push(selectedQuestion.id);
+            askedQuestions[currentCategory][currentLevel].push(selectedQuestion.id);
             
             return selectedQuestion;
         }
@@ -788,6 +940,8 @@
                 } else if (ex.type === 'count') {
                     const objects = ex.visual.match(/[\p{Emoji}]/gu) || [];
                     visual.innerHTML = '<div class="object-counter">' + objects.map(obj => `<div class="count-object">${obj}</div>`).join('') + '</div>';
+                } else if (ex.type === 'connect_vowels') {
+                    renderConnectDots(ex);
                 } else {
                     visual.innerHTML = `<div style="font-size: 64px;">${ex.visual}</div>`;
                 }
@@ -796,7 +950,7 @@
             const optsContainer = document.getElementById('options-container');
             optsContainer.innerHTML = '';
             
-            if (ex.type === 'animal_sound') {
+            if (ex.type === 'animal_sound' || ex.type === 'animal_touch') {
                 ex.opts.forEach(opt => {
                     const animal = ANIMALS[opt];
                     const btn = document.createElement('div');
@@ -808,8 +962,7 @@
                     btn.onclick = () => handleAnimalAnswer(opt, btn);
                     optsContainer.appendChild(btn);
                 });
-            } else if (ex.type === 'vowel' || ex.type === 'vowel_word' || ex.type === 'vowel_start') {
-                // Render vowel exercises like arbolabc
+            } else if (ex.type === 'vowel' || ex.type === 'vowel_word' || ex.type === 'vowel_start' || ex.type === 'vowel_touch' || ex.type === 'vowel_sequence' || ex.type === 'vowel_order' || ex.type === 'vowel_count' || ex.type === 'vowel_in_word') {
                 ex.opts.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'vowel-option';
@@ -817,15 +970,27 @@
                     btn.onclick = () => handleVowelAnswer(opt, btn);
                     optsContainer.appendChild(btn);
                 });
+            } else if (ex.type === 'connect_vowels') {
+                // Los puntos ya se renderizaron en renderConnectDots
+            } else if (ex.type === 'color' || ex.type === 'color_touch' || ex.type === 'color_object' || ex.type === 'color_mix' || ex.type === 'color_primary' || ex.type === 'color_temp' || ex.type === 'color_rainbow' || ex.type === 'color_count' || ex.type === 'color_opposite' || ex.type === 'color_culture' || ex.type === 'color_meaning' || ex.type === 'color_gem') {
+                ex.opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    const colors = { 'rojo': '#E74C3C', 'azul': '#3498DB', 'verde': '#2ECC71', 'amarillo': '#F1C40F', 'naranja': '#F39C12', 'morado': '#9B59B6', 'negro': '#2C3E50', 'blanco': '#ECF0F1' };
+                    if (colors[opt]) {
+                        btn.innerHTML = `<span class="color-circle" style="background:${colors[opt]}"></span>${opt}`;
+                    } else {
+                        btn.textContent = opt;
+                    }
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    optsContainer.appendChild(btn);
+                });
             } else {
                 ex.opts.forEach(opt => {
                     const btn = document.createElement('button');
                     btn.className = 'option-btn';
                     
-                    if (currentExercise.type === 'color') {
-                        const colors = { 'rojo': '#E74C3C', 'azul': '#3498DB', 'verde': '#2ECC71', 'amarillo': '#F1C40F' };
-                        btn.innerHTML = `<span class="color-circle" style="background:${colors[opt] || '#95A5A6'}"></span>${opt}`;
-                    } else if (ex.type === 'count') {
+                    if (ex.type === 'count' || ex.type === 'add_simple' || ex.type === 'sub_simple' || ex.type === 'sequence' || ex.type === 'sequence_2' || ex.type === 'vowel_count' || ex.type === 'color_count') {
                         btn.className += ' number-option';
                         btn.textContent = opt;
                     } else {
@@ -840,19 +1005,84 @@
             document.getElementById('feedback-container').innerHTML = '';
         }
 
-        function handleVowelAnswer(value, btn) {
-            if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
+        function renderConnectDots(ex) {
+            const visual = document.getElementById('visual-container');
+            const dots = ex.dots || ['A', 'E', 'I'];
             
-            const isCorrect = String(value).trim() === String(currentExercise.ans).trim();
+            visual.innerHTML = `
+                <div class="connect-dots-container">
+                    <div class="dots-grid" id="dots-grid">
+                        ${dots.map((dot, i) => `<div class="dot" data-index="${i}" data-value="${dot}" onclick="connectDot('${dot}', ${i})">${dot}</div>`).join('')}
+                    </div>
+                    <svg class="connect-svg" id="connect-svg">
+                        <line class="connect-line" id="connect-line" x1="0" y1="0" x2="0" y2="0" style="stroke-dasharray: 1000; stroke-dashoffset: 1000;"/>
+                    </svg>
+                    <div style="font-size: 14px; color: #7F8C8D;">Toca las vocales en orden</div>
+                </div>
+            `;
+            
+            connectedDots = [];
+        }
+
+        function connectDot(value, index) {
+            if (!currentExercise || currentExercise.type !== 'connect_vowels') return;
+            
+            const expectedOrder = currentExercise.ans || ['A', 'E', 'I'];
+            
+            // Verificar si es el siguiente en la secuencia
+            if (connectedDots.length === index && value === expectedOrder[index]) {
+                // Correcto
+                document.querySelector(`.dot[data-value="${value}"]`).classList.add('connected');
+                connectedDots.push(value);
+                
+                // Dibujar línea
+                if (connectedDots.length > 1) {
+                    drawConnection(connectedDots.length - 2, connectedDots.length - 1);
+                }
+                
+                // Verificar si completó
+                if (connectedDots.length === expectedOrder.length) {
+                    handleVowelAnswer('COMPLETED', null);
+                }
+            } else {
+                // Incorrecto
+                const dot = document.querySelector(`.dot[data-value="${value}"]`);
+                dot.classList.add('wrong');
+                setTimeout(() => dot.classList.remove('wrong'), 500);
+                playSound('wrong');
+            }
+        }
+
+        function drawConnection(fromIndex, toIndex) {
+            const dots = document.querySelectorAll('.dot');
+            const from = dots[fromIndex].getBoundingClientRect();
+            const to = dots[toIndex].getBoundingClientRect();
+            const container = document.querySelector('.connect-dots-container').getBoundingClientRect();
+            
+            const line = document.getElementById('connect-line');
+            line.setAttribute('x1', from.left - container.left + 25);
+            line.setAttribute('y1', from.top - container.top + 25);
+            line.setAttribute('x2', to.left - container.left + 25);
+            line.setAttribute('y2', to.top - container.top + 25);
+            line.classList.add('connect-anim');
+        }
+
+        function handleVowelAnswer(value, btn) {
+            if (btn && (btn.classList.contains('selected') || btn.classList.contains('wrong'))) return;
+            
+            const isCorrect = currentExercise.type === 'connect_vowels' ? value === 'COMPLETED' : String(value).trim() === String(currentExercise.ans).trim();
             
             if (isCorrect) {
-                btn.classList.add('selected');
+                if (btn) btn.classList.add('selected');
                 correctCount++;
                 streak++;
                 playSound('correct');
                 updateStreak();
             } else {
-                btn.classList.add('wrong');
+                if (btn) {
+                    btn.classList.add('wrong');
+                    setTimeout(() => btn.classList.remove('wrong'), 500);
+                }
                 streak = 0;
                 playSound('wrong');
                 updateStreak();
@@ -999,7 +1229,7 @@
             message += `Correctas: ${correctCount}/10\n`;
             message += `XP ganados: ${xpGain}\n`;
             message += `Nivel: ${stats.level}\n\n`;
-            message += '¡Excelente trabajo! 🇵🇪';
+            message += '¡Excelente trabajo, campeón! 🇵🇪✨';
             
             alert(message);
             
@@ -1015,24 +1245,20 @@
         }
 
         function showScreen(id) {
-            ['login-screen', 'category-screen', 'exercise-screen'].forEach(sid => {
+            ['login-screen', 'level-screen', 'category-screen', 'exercise-screen'].forEach(sid => {
                 document.getElementById(sid).classList.add('hidden');
             });
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function getGradeInfo(age) {
-            return GRADE_LEVELS[age.toString()] || { level: 'Desconocido', grade: '', category: 'primaria_baja' };
-        }
-
         document.getElementById('age-input').addEventListener('input', function() {
             const age = parseInt(this.value);
-            if (age >= 3 && age <= 14) {
-                const info = getGradeInfo(age);
+            if (age >= 3 && age <= 6) {
+                const info = AGE_CONFIG[age.toString()];
                 document.getElementById('grade-display').textContent = 
                     `${info.level} - ${info.grade}`;
             } else {
-                document.getElementById('grade-display').textContent = '';
+                document.getElementById('grade-display').textContent = 'Inicial - 4 años';
             }
         });
 
@@ -1040,21 +1266,20 @@
             const name = document.getElementById('name-input').value.trim();
             const age = parseInt(document.getElementById('age-input').value);
             
-            if (!name || age < 3 || age > 14) {
-                alert('Por favor ingresa tu nombre y edad (3-14 años)');
+            if (!name || age < 3 || age > 6) {
+                alert('Por favor ingresa tu nombre y edad (3-6 años)');
                 return;
             }
             
             user = { name, age };
             userAge = age;
-            userGrade = getGradeInfo(age);
             
-            document.getElementById('user-greeting').textContent = `¡Hola, ${name}! 👋`;
-            document.getElementById('grade-info').textContent = 
-                `${userGrade.level} - ${userGrade.grade}`;
+            document.getElementById('level-greeting').textContent = `¡Hola, ${name}! 👋`;
             
-            showScreen('category-screen');
+            showScreen('level-screen');
         };
+
+        document.getElementById('start-level-btn').onclick = startFromLevel;
 
         window.onload = () => {
             loadVoices();
