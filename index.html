@@ -18,11 +18,15 @@
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
         @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
         @keyframes bounceIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
+        @keyframes selectGlow { 0%{box-shadow:0 0 0 0 rgba(46,204,113,0.6)} 70%{box-shadow:0 0 0 15px rgba(46,204,113,0)} 100%{box-shadow:0 0 0 0 rgba(46,204,113,0)} }
+        @keyframes wrongGlow { 0%{box-shadow:0 0 0 0 rgba(231,76,60,0.6)} 70%{box-shadow:0 0 0 15px rgba(231,76,60,0)} 100%{box-shadow:0 0 0 0 rgba(231,76,60,0)} }
 
         .float { animation: float 3s ease-in-out infinite; }
         .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shake { animation: shake 0.5s ease-in-out; }
         .bounce-in { animation: bounceIn 0.5s ease-out; }
+        .select-glow { animation: selectGlow 0.8s ease-out; }
+        .wrong-glow { animation: wrongGlow 0.8s ease-out; }
 
         .bubble {
             width: 180px;
@@ -40,19 +44,10 @@
             position: relative;
         }
 
-        .bubble:hover:not(.locked) {
-            transform: translateY(-8px) scale(1.05);
-        }
-
-        .bubble.locked {
-            opacity: 0.6;
-            cursor: not-allowed;
-            filter: grayscale(0.5);
-        }
-
+        .bubble:hover:not(.locked) { transform: translateY(-8px) scale(1.05); }
+        .bubble.locked { opacity: 0.6; cursor: not-allowed; filter: grayscale(0.5); }
         .bubble-icon { font-size: 60px; margin-bottom: 8px; }
         .bubble-label { font-weight: 800; font-size: 14px; color: #2C3E50; text-align: center; }
-
         .lock-overlay {
             position: absolute;
             font-size: 48px;
@@ -75,7 +70,6 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .btn:active { transform: scale(0.95); }
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -101,8 +95,7 @@
             gap: 12px;
             min-height: 60px;
         }
-
-        .option-btn:hover { border-color: #3498DB; transform: translateX(8px); }
+        .option-btn:hover { border-color: #3498DB; }
         .option-btn.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.05); }
         .option-btn.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
 
@@ -125,35 +118,81 @@
             filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
         }
 
+        /* MÁQUINAS DE CHICLES - Clickeables directamente */
         .gumball-machine {
-            width: 150px;
-            height: 220px;
+            width: 180px;
+            height: 260px;
             position: relative;
             display: inline-block;
-            margin: 0 20px;
+            margin: 0 15px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 6px solid transparent;
+            border-radius: 20px;
+            padding: 10px;
+        }
+
+        .gumball-machine:hover {
+            transform: scale(1.08);
+        }
+
+        .gumball-machine.selected {
+            border-color: #2ECC71;
+            background: rgba(46,204,113,0.1);
+            border-radius: 20px;
+        }
+
+        .gumball-machine.wrong {
+            border-color: #E74C3C;
+            background: rgba(231,76,60,0.1);
+            border-radius: 20px;
+            animation: shake 0.5s;
         }
 
         .gumball-globe {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            border: 4px solid rgba(0,0,0,0.2);
+            border: 4px solid rgba(0,0,0,0.15);
             overflow: hidden;
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.8);
+            margin: 0 auto;
             position: relative;
         }
 
         .gumballs-filled {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 2px;
-            padding: 8px;
+            gap: 3px;
+            padding: 10px;
         }
 
         .gumball {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+        }
+
+        .gumball-base {
+            width: 90px;
+            height: 80px;
+            background: linear-gradient(180deg, #E74C3C, #C0392B);
+            margin: 8px auto 0;
+            border-radius: 0 0 16px 16px;
+            position: relative;
+        }
+
+        .gumball-base::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 35px;
+            background: #95A5A6;
+            border-radius: 8px;
         }
 
         .progress-bar {
@@ -163,7 +202,6 @@
             overflow: hidden;
             border: 3px solid white;
         }
-
         .progress-fill {
             background: linear-gradient(90deg, #2ECC71, #27AE60);
             height: 100%;
@@ -172,7 +210,6 @@
         }
 
         .hidden { display: none !important; }
-
         .card {
             background: white;
             border-radius: 24px;
@@ -196,30 +233,34 @@
             margin-bottom: 12px;
             transition: all 0.2s;
         }
-
         .audio-btn:hover { transform: scale(1.1); }
-        .audio-btn:active { transform: scale(0.95); }
+
+        /* FIGURAS SVG */
+        .shape-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
 
         .shape-option {
+            width: 120px;
+            height: 120px;
             background: white;
             border: 4px solid #E0E0E0;
             border-radius: 16px;
-            padding: 20px;
-            margin: 10px;
             cursor: pointer;
             transition: all 0.3s;
-            display: inline-flex;
+            display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 120px;
-            min-height: 120px;
+            padding: 15px;
         }
-
-        .shape-option:hover { border-color: #3498DB; transform: scale(1.05); }
+        .shape-option:hover { border-color: #3498DB; transform: scale(1.08); }
         .shape-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
         .shape-option.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
-
-        .shape-icon { font-size: 64px; }
 
         .feedback {
             padding: 16px 32px;
@@ -229,9 +270,29 @@
             display: inline-block;
             margin-top: 20px;
         }
-
         .feedback.correct { background: #2ECC71; color: white; }
         .feedback.wrong { background: #E74C3C; color: white; }
+
+        /* Habitat clickable */
+        .habitat-option {
+            background: white;
+            border: 4px solid #E0E0E0;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 140px;
+            min-height: 100px;
+            gap: 8px;
+        }
+        .habitat-option:hover { border-color: #3498DB; transform: scale(1.05); }
+        .habitat-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
+        .habitat-option.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
     </style>
 </head>
 <body>
@@ -241,11 +302,8 @@
             <div class="float" style="font-size: 80px; margin-bottom: 16px;">🎓</div>
             <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 8px; color: #2C3E50;">MathQuest</h1>
             <p style="color: #7F8C8D; margin-bottom: 32px; font-size: 16px;">Aprende jugando como en Smartick</p>
-
             <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
-
             <input id="age-input" type="number" placeholder="Tu edad (4-14)" min="4" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 24px;">
-
             <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar Aventura!</button>
         </div>
     </div>
@@ -274,13 +332,12 @@
         </div>
 
         <div style="max-width: 900px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 0 20px;">
-            <h2 style="font-size: 28px; font-weight: 900; color: #2C3E50;"> 🌍 Mundos de Aprendizaje</h2>
+            <h2 style="font-size: 28px; font-weight: 900; color: #2C3E50;"> Mundos de Aprendizaje</h2>
             <div id="worlds-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;"></div>
         </div>
 
         <div id="character" class="float" style="position: fixed; bottom: 20px; right: 20px; font-size: 80px; cursor: pointer;"></div>
-
-        <div class="pulse" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FFD700, #FFA500); padding: 16px 32px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); cursor: pointer; font-weight: 800; font-size: 16px; color: #2C3E50;">
+        <div class="pulse" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FFD700, #FFA500); padding: 16px 32px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); font-weight: 800; font-size: 16px; color: #2C3E50;">
             🎯 Reto Diario: Completa 3 ejercicios
         </div>
     </div>
@@ -349,7 +406,7 @@
         const WORLDS = [
             { id: 'numeros', name: 'Números', icon: '🔢', color: '#FF6B6B' },
             { id: 'colores', name: 'Colores', icon: '🎨', color: '#4ECDC4' },
-            { id: 'formas', name: 'Formas', icon: '🔷', color: '#FFE66D' },
+            { id: 'formas', name: 'Formas', icon: '', color: '#FFE66D' },
             { id: 'sumas', name: 'Sumas', icon: '➕', color: '#95E1D3' },
             { id: 'restas', name: 'Restas', icon: '➖', color: '#F38181' },
             { id: 'multiplicacion', name: 'Multiplicar', icon: '✖️', color: '#AA96DA' }
@@ -369,18 +426,28 @@
         const totalQuestions = 10;
 
         // ==========================================
+        // SVG SHAPES
+        // ==========================================
+        const SHAPES = {
+            circle: `<svg viewBox="0 0 100 100" width="80" height="80"><circle cx="50" cy="50" r="40" fill="#FF6B6B" stroke="#E74C3C" stroke-width="3"/></svg>`,
+            square: `<svg viewBox="0 0 100 100" width="80" height="80"><rect x="15" y="15" width="70" height="70" rx="4" fill="#3498DB" stroke="#2980B9" stroke-width="3"/></svg>`,
+            triangle: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,10 90,85 10,85" fill="#2ECC71" stroke="#27AE60" stroke-width="3"/></svg>`,
+            star: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,5 61,35 95,35 68,55 79,90 50,68 21,90 32,55 5,35 39,35" fill="#F1C40F" stroke="#F39C12" stroke-width="3"/></svg>`,
+            heart: `<svg viewBox="0 0 100 100" width="80" height="80"><path d="M50,88 C25,65 5,50 5,30 C5,15 15,5 30,5 C40,5 48,12 50,18 C52,12 60,5 70,5 C85,5 95,15 95,30 C95,50 75,65 50,88Z" fill="#E74C3C" stroke="#C0392B" stroke-width="3"/></svg>`,
+            diamond: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,5 95,50 50,95 5,50" fill="#9B59B6" stroke="#8E44AD" stroke-width="3"/></svg>`
+        };
+
+        // ==========================================
         // GENERADORES DE EJERCICIOS CORREGIDOS
         // ==========================================
         function generateExercise(type, diff) {
             switch(type) {
                 case 'counting':
                     const count = Math.floor(Math.random() * Math.max(2, diff * 3)) + 1;
-                    // SOLO objetos que se ven - sin strings vacíos
-                    const items = ['🍎', '🍊', '🎈', '', '🌟', ''];
+                    // SOLO emojis que siempre se ven
+                    const items = ['🍎', '', '🎈', '', '🌟', ''];
                     let item;
-                    do {
-                        item = items[Math.floor(Math.random() * items.length)];
-                    } while (item === ''); // Garantizar que siempre muestra algo
+                    do { item = items[Math.floor(Math.random() * items.length)]; } while(item === '');
                     
                     return {
                         type: 'counting',
@@ -394,13 +461,13 @@
 
                 case 'colors':
                     const colors = [
-                        { name: 'Verde', hex: '#2ECC71', emoji: '🟢' },
-                        { name: 'Rojo', hex: '#E74C3C', emoji: '🔴' },
-                        { name: 'Azul', hex: '#3498DB', emoji: '🔵' },
-                        { name: 'Amarillo', hex: '#F1C40F', emoji: '🟡' }
+                        { name: 'Verde', hex: '#2ECC71' },
+                        { name: 'Rojo', hex: '#E74C3C' },
+                        { name: 'Azul', hex: '#3498DB' },
+                        { name: 'Amarillo', hex: '#F1C40F' }
                     ];
-                    const target = colors[Math.floor(Math.random() * colors.length)];
-                    const fruitItems = ['🍎', '', '🍊', '🫐'];
+                    const targetColor = colors[Math.floor(Math.random() * colors.length)];
+                    const fruitItems = ['🍎', '', '🍊', ''];
                     let fruit;
                     do { fruit = fruitItems[Math.floor(Math.random() * fruitItems.length)]; } while(fruit === '');
                     
@@ -408,65 +475,74 @@
                         type: 'colors',
                         instruction: 'Marca las etiquetas correctas.',
                         question: `¿De qué color es esta ${fruit}?`,
-                        correctAnswer: target.name,
+                        correctAnswer: targetColor.name,
                         options: colors
                     };
 
                 case 'shapes':
-                    const shapes = [
-                        { name: 'Círculo', icon: '', shape: 'circle' },
-                        { name: 'Cuadrado', icon: '🟦', shape: 'square' },
-                        { name: 'Triángulo', icon: '', shape: 'triangle' },
-                        { name: 'Estrella', icon: '⭐', shape: 'star' },
-                        { name: 'Corazón', icon: '❤️', shape: 'heart' }
+                    const allShapes = [
+                        { name: 'Círculo', svg: SHAPES.circle },
+                        { name: 'Cuadrado', svg: SHAPES.square },
+                        { name: 'Triángulo', svg: SHAPES.triangle },
+                        { name: 'Estrella', svg: SHAPES.star },
+                        { name: 'Corazón', svg: SHAPES.heart },
+                        { name: 'Diamante', svg: SHAPES.diamond }
                     ];
-                    const targetShape = shapes[Math.floor(Math.random() * shapes.length)];
-                    const wrongShapes = shapes.filter(s => s.name !== targetShape.name).sort(() => Math.random()-0.5).slice(0, 3);
+                    const targetShape = allShapes[Math.floor(Math.random() * allShapes.length)];
+                    const wrongShapes = allShapes.filter(s => s.name !== targetShape.name).sort(() => Math.random()-0.5).slice(0, 3);
                     
                     return {
                         type: 'shapes',
                         instruction: 'Selecciona la figura correcta.',
-                        question: `Toca el: ${targetShape.name}`,
+                        question: `Toca el ${targetShape.name}`,
                         correctAnswer: targetShape.name,
                         options: [targetShape, ...wrongShapes].sort(() => Math.random()-0.5)
                     };
 
                 case 'full-empty':
+                    // CORREGIDO: Se selecciona directamente la máquina, sin botones de texto
                     const fullSide = Math.random() > 0.5 ? 'left' : 'right';
                     return {
                         type: 'full-empty',
                         instruction: 'Responde la pregunta.',
                         question: '¿Cuál está llena?',
                         correctAnswer: fullSide,
-                        options: [
-                            { label: 'Izquierda', value: 'left' },
-                            { label: 'Derecha', value: 'right' }
-                        ]
+                        options: null // No se usan botones, se clickea directamente la máquina
                     };
 
                 case 'habitats':
+                    // CORREGIDO: El animal que se muestra SIEMPRE coincide con la pregunta
                     const animals = [
-                        { name: 'elefante', icon: '🐘', habitat: 'Sabana', wrong: ['Océano', 'Cielo'] },
-                        { name: 'tiburón', icon: '🦈', habitat: 'Océano', wrong: ['Sabana', 'Cielo'] },
-                        { name: 'águila', icon: '🦅', habitat: 'Cielo', wrong: ['Océano', 'Sabana'] },
-                        { name: 'oso', icon: '🐻', habitat: 'Bosque', wrong: ['Océano', 'Cielo'] }
+                        { name: 'elefante', emoji: '🐘', habitat: 'Sabana', habitatIcon: '🌍', wrong: ['Océano', 'Cielo'] },
+                        { name: 'tiburón', emoji: '🦈', habitat: 'Océano', habitatIcon: '🌊', wrong: ['Sabana', 'Cielo'] },
+                        { name: 'águila', emoji: '🦅', habitat: 'Cielo', habitatIcon: '☁️', wrong: ['Océano', 'Sabana'] },
+                        { name: 'oso', emoji: '🐻', habitat: 'Bosque', habitatIcon: '🌲', wrong: ['Océano', 'Cielo'] },
+                        { name: 'pez', emoji: '🐠', habitat: 'Océano', habitatIcon: '🌊', wrong: ['Sabana', 'Cielo'] },
+                        { name: 'león', emoji: '🦁', habitat: 'Sabana', habitatIcon: '🌍', wrong: ['Océano', 'Cielo'] }
                     ];
                     const animal = animals[Math.floor(Math.random() * animals.length)];
-                    const habitats = [
+                    
+                    const allHabitats = [
                         { name: 'Océano', icon: '🌊' },
-                        { name: 'Sabana', icon: '🌍' },
-                        { name: 'Cielo', icon: '️' },
-                        { name: 'Bosque', icon: '🌲' }
+                        { name: 'Sabana', icon: '' },
+                        { name: 'Cielo', icon: '☁️' },
+                        { name: 'Bosque', icon: '' }
                     ];
+                    
+                    // Construir opciones: correcta + 2 incorrectas
+                    const wrongHabitats = allHabitats.filter(h => animal.wrong.includes(h.name));
                     const habitatOpts = [
-                        habitats.find(h => h.name === animal.habitat),
-                        ...habitats.filter(h => animal.wrong.includes(h.name)).slice(0, 2)
+                        allHabitats.find(h => h.name === animal.habitat),
+                        wrongHabitats[0],
+                        wrongHabitats[1]
                     ].sort(() => Math.random() - 0.5);
                     
                     return {
                         type: 'habitats',
                         instruction: 'Marca las etiquetas correctas.',
                         question: `¿Dónde vive el/la ${animal.name}?`,
+                        animalEmoji: animal.emoji, // El emoji que se muestra
+                        animalName: animal.name,    // El nombre en la pregunta
                         correctAnswer: animal.habitat,
                         options: habitatOpts
                     };
@@ -525,29 +601,23 @@
         }
 
         // ==========================================
-        // AUDIO / NARRACIÓN
+        // AUDIO
         // ==========================================
         function speakQuestion() {
             if (!currentExercise) return;
-            const text = currentExercise.question;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
+                const utterance = new SpeechSynthesisUtterance(currentExercise.question);
                 utterance.lang = 'es-ES';
                 utterance.rate = 0.9;
                 utterance.pitch = 1.1;
-                utterance.volume = 1;
-                
-                // Intentar usar voz en español
                 const voices = window.speechSynthesis.getVoices();
                 const spanishVoice = voices.find(v => v.lang.includes('es'));
                 if (spanishVoice) utterance.voice = spanishVoice;
-                
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        // Cargar voces cuando estén disponibles
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = () => {};
         }
@@ -570,17 +640,13 @@
                 const bubble = document.createElement('div');
                 bubble.className = `bubble ${!isUnlocked ? 'locked' : ''} ${isUnlocked ? 'float' : ''}`;
                 bubble.style.animationDelay = `${index * 0.2}s`;
-                if (isUnlocked) {
-                    bubble.style.background = `radial-gradient(circle at 30% 30%, ${world.color}40, ${world.color}10)`;
-                }
+                if (isUnlocked) bubble.style.background = `radial-gradient(circle at 30% 30%, ${world.color}40, ${world.color}10)`;
                 bubble.innerHTML = `
                     <div class="bubble-icon">${world.icon}</div>
                     <div class="bubble-label">${world.name}</div>
                     ${!isUnlocked ? '<div class="lock-overlay">🔒</div>' : ''}
                 `;
-                if (isUnlocked) {
-                    bubble.onclick = () => startExercise(world.id);
-                }
+                if (isUnlocked) bubble.onclick = () => startExercise(world.id);
                 container.appendChild(bubble);
             });
         }
@@ -588,7 +654,7 @@
         function updateWorldUI() {
             document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
             document.getElementById('age-badge').textContent = `${AGE_CONFIG[ageGroup].label} (${ageGroup} años)`;
-            document.getElementById('xp-badge').innerHTML = `⭐ ${stats.stars} &nbsp;  ${stats.xp} XP`;
+            document.getElementById('xp-badge').innerHTML = `⭐ ${stats.stars} &nbsp; 🏆 ${stats.xp} XP`;
             document.getElementById('level-text').textContent = `Nivel ${stats.level}`;
             document.getElementById('xp-text').textContent = `${stats.xp % 100}/100 XP`;
             document.getElementById('progress-fill').style.width = `${stats.xp % 100}%`;
@@ -601,10 +667,13 @@
             document.getElementById('question-text').textContent = exercise.question;
             document.getElementById('question-counter').textContent = `${questionNum} / ${totalQuestions}`;
 
-            // Render visual
             const visual = document.getElementById('visual-container');
             visual.innerHTML = '';
 
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            // === CONTEO ===
             if (exercise.type === 'counting') {
                 visual.innerHTML = '<div class="objects-container" id="objects-display"></div>';
                 const objDisplay = document.getElementById('objects-display');
@@ -615,71 +684,198 @@
                     obj.style.animationDelay = `${i * 0.1}s`;
                     objDisplay.appendChild(obj);
                 }
-            } else if (exercise.type === 'full-empty') {
-                visual.innerHTML = `
-                    <div style="display:flex;justify-content:center;gap:40px;margin:20px 0;flex-wrap:wrap">
-                        <div class="gumball-machine">
-                            <div class="gumball-globe">
-                                ${exercise.correctAnswer === 'left' ? '<div class="gumballs-filled">' + Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3'][i%4]}"></div>`).join('') + '</div>' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#ccc">Vacío</div>'}
-                            </div>
-                            <div style="width:80px;height:100px;background:linear-gradient(180deg,#E74C3C,#C0392B);margin:0 auto;border-radius:0 0 20px 20px"></div>
-                        </div>
-                        <div class="gumball-machine">
-                            <div class="gumball-globe">
-                                ${exercise.correctAnswer === 'right' ? '<div class="gumballs-filled">' + Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3'][i%4]}"></div>`).join('') + '</div>' : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:24px;color:#ccc">Vacío</div>'}
-                            </div>
-                            <div style="width:80px;height:100px;background:linear-gradient(180deg,#E74C3C,#C0392B);margin:0 auto;border-radius:0 0 20px 20px"></div>
-                        </div>
-                    </div>
-                `;
-            } else if (exercise.type === 'colors') {
-                const fruitItems = ['🍎', '', '🍊', ''];
-                let fruit;
-                do { fruit = fruitItems[Math.floor(Math.random() * fruitItems.length)]; } while(fruit === '');
-                visual.innerHTML = `<div style="font-size:80px;margin:20px 0">${fruit}</div>`;
-            } else if (exercise.type === 'habitats') {
-                const animalMatch = exercise.options.find(h => ['🐘','🦈','','🐻'].includes(h.icon));
-                const animalIcon = animalMatch ? animalMatch.icon : '🐘';
-                visual.innerHTML = `<div style="font-size:100px;margin:20px 0">${animalIcon}</div>`;
-            } else if (exercise.type === 'shapes') {
-                visual.innerHTML = `<div style="font-size:60px;margin:20px 0">¿Cuál es el ${exercise.question.replace('Toca el: ', '')}?</div>`;
-            }
-
-            // Render options
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            exercise.options.forEach(opt => {
-                const btn = document.createElement('button');
-
-                if (exercise.type === 'shapes') {
-                    btn.className = 'shape-option';
-                    btn.innerHTML = `<div class="shape-icon">${opt.icon}</div>`;
-                    btn.onclick = () => handleAnswer(opt.name, btn);
-                } else if (exercise.type === 'colors') {
-                    btn.className = 'option-btn';
-                    btn.innerHTML = `<div style="width:32px;height:32px;border-radius:50%;background:${opt.hex};margin-right:12px"></div>${opt.name}`;
-                    btn.onclick = () => handleAnswer(opt.name, btn);
-                } else if (exercise.type === 'habitats') {
-                    btn.className = 'option-btn';
-                    btn.innerHTML = `<span style="font-size:32px;margin-right:12px">${opt.icon}</span>${opt.name}`;
-                    btn.onclick = () => handleAnswer(opt.name, btn);
-                } else if (exercise.type === 'full-empty') {
-                    btn.className = 'option-btn';
-                    btn.textContent = opt.label;
-                    btn.onclick = () => handleAnswer(opt.value, btn);
-                } else {
+                // Opciones numéricas
+                exercise.options.forEach(opt => {
+                    const btn = document.createElement('button');
                     btn.className = 'option-btn';
                     btn.textContent = opt;
                     btn.onclick = () => handleAnswer(opt, btn);
-                }
+                    optionsContainer.appendChild(btn);
+                });
+            }
 
-                optionsContainer.appendChild(btn);
-            });
+            // === LLENO/VACÍO (SELECCIÓN DIRECTA) ===
+            else if (exercise.type === 'full-empty') {
+                // No se muestran botones de texto, se clickea directamente la máquina
+                visual.innerHTML = `
+                    <div style="display:flex;justify-content:center;align-items:flex-end;gap:30px;margin:20px 0;flex-wrap:wrap">
+                        <div class="gumball-machine" id="machine-left" onclick="handleMachineAnswer('left')">
+                            <div class="gumball-globe">
+                                ${exercise.correctAnswer === 'left' ? 
+                                    '<div class="gumballs-filled">' + 
+                                    Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3','#F38181'][i%5]}"></div>`).join('') + 
+                                    '</div>' : 
+                                    '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px;font-weight:700">Vacío</div>'}
+                            </div>
+                            <div class="gumball-base"></div>
+                        </div>
+                        <div class="gumball-machine" id="machine-right" onclick="handleMachineAnswer('right')">
+                            <div class="gumball-globe">
+                                ${exercise.correctAnswer === 'right' ? 
+                                    '<div class="gumballs-filled">' + 
+                                    Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3','#F38181'][i%5]}"></div>`).join('') + 
+                                    '</div>' : 
+                                    '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px;font-weight:700">Vacío</div>'}
+                            </div>
+                            <div class="gumball-base"></div>
+                        </div>
+                    </div>
+                    <div style="font-size:14px;color:#94a3b8;margin-top:10px;font-weight:600"> Toca la máquina correcta</div>
+                `;
+            }
+
+            // === COLORES ===
+            else if (exercise.type === 'colors') {
+                const fruitItems = ['', '', '🍊', ''];
+                let fruit;
+                do { fruit = fruitItems[Math.floor(Math.random() * fruitItems.length)]; } while(fruit === '');
+                visual.innerHTML = `<div style="font-size:80px;margin:20px 0">${fruit}</div>`;
+                
+                exercise.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<div style="width:32px;height:32px;border-radius:50%;background:${opt.hex};margin-right:12px;flex-shrink:0"></div><span>${opt.name}</span>`;
+                    btn.onclick = () => handleAnswer(opt.name, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            // === HÁBITATS (CORREGIDO) ===
+            else if (exercise.type === 'habitats') {
+                // Muestra el emoji del animal que coincide con la pregunta
+                visual.innerHTML = `
+                    <div style="font-size:100px;margin:20px 0;animation:bounceIn 0.5s ease-out">${exercise.animalEmoji}</div>
+                    <div style="font-size:14px;color:#94a3b8;font-weight:600;margin-bottom:10px">El ${exercise.animalName}</div>
+                `;
+                
+                // Opciones de hábitat
+                exercise.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerHTML = `<span style="font-size:36px;margin-right:12px">${opt.icon}</span><span>${opt.name}</span>`;
+                    btn.onclick = () => handleAnswer(opt.name, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            // === FIGURAS ===
+            else if (exercise.type === 'shapes') {
+                visual.innerHTML = `
+                    <div class="shape-container" id="shapes-display">
+                        ${exercise.options.map(opt => `
+                            <div class="shape-option" onclick="handleShapeAnswer('${opt.name}', this)">
+                                ${opt.svg}
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // === MATEMÁTICAS ===
+            else if (exercise.type === 'addsub' || exercise.type === 'muldiv') {
+                exercise.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => handleAnswer(opt, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            }
 
             document.getElementById('feedback-container').innerHTML = '';
         }
 
+        // === MANEJADOR PARA MÁQUINAS (LLENO/VACÍO) ===
+        function handleMachineAnswer(side) {
+            if (currentExercise.type !== 'full-empty') return;
+            
+            const isCorrect = side === currentExercise.correctAnswer;
+            const machineEl = document.getElementById(`machine-${side}`);
+            
+            if (isCorrect) {
+                machineEl.classList.add('selected');
+                correctCount++;
+            } else {
+                machineEl.classList.add('wrong');
+                // Mostrar cuál es la correcta
+                setTimeout(() => {
+                    document.getElementById(`machine-${currentExercise.correctAnswer}`).classList.add('selected');
+                }, 300);
+            }
+
+            const feedback = document.getElementById('feedback-container');
+            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
+                ${isCorrect ? ' ¡Excelente!' : '💪 ¡La otra está llena!'}
+            </div>`;
+
+            if (isCorrect && 'speechSynthesis' in window) {
+                const ut = new SpeechSynthesisUtterance('¡Excelente!');
+                ut.lang = 'es-ES';
+                window.speechSynthesis.speak(ut);
+            }
+
+            setTimeout(() => {
+                if (questionNum >= totalQuestions) {
+                    completeExercise();
+                } else {
+                    questionNum++;
+                    const config = AGE_CONFIG[ageGroup];
+                    const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
+                    currentExercise = generateExercise(exerciseType, difficulty);
+                    renderExercise(currentExercise);
+                    setTimeout(speakQuestion, 300);
+                }
+            }, 1500);
+        }
+
+        // === MANEJADOR PARA FIGURAS ===
+        function handleShapeAnswer(shapeName, el) {
+            if (el.classList.contains('selected') || el.classList.contains('wrong')) return;
+            
+            const isCorrect = shapeName === currentExercise.correctAnswer;
+            
+            if (isCorrect) {
+                el.classList.add('selected');
+                correctCount++;
+            } else {
+                el.classList.add('wrong');
+                // Mostrar la correcta
+                setTimeout(() => {
+                    const options = document.querySelectorAll('.shape-option');
+                    options.forEach(opt => {
+                        if (opt.getAttribute('onclick').includes(currentExercise.correctAnswer)) {
+                            opt.classList.add('selected');
+                        }
+                    });
+                }, 300);
+            }
+
+            const feedback = document.getElementById('feedback-container');
+            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
+                ${isCorrect ? ' ¡Excelente!' : '💪 ¡Ese no es!'}
+            </div>`;
+
+            if (isCorrect && 'speechSynthesis' in window) {
+                const ut = new SpeechSynthesisUtterance('¡Excelente!');
+                ut.lang = 'es-ES';
+                window.speechSynthesis.speak(ut);
+            }
+
+            setTimeout(() => {
+                if (questionNum >= totalQuestions) {
+                    completeExercise();
+                } else {
+                    questionNum++;
+                    const config = AGE_CONFIG[ageGroup];
+                    const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
+                    currentExercise = generateExercise(exerciseType, difficulty);
+                    renderExercise(currentExercise);
+                    setTimeout(speakQuestion, 300);
+                }
+            }, 1500);
+        }
+
+        // === MANEJADOR GENERAL ===
         function handleAnswer(value, btn) {
             if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
 
@@ -699,11 +895,9 @@
                 ${isCorrect ? ' ¡Excelente!' : '💪 ¡Sigue intentando!'}
             </div>`;
 
-            // Auto-narrar retroalimentación
             if (isCorrect && 'speechSynthesis' in window) {
                 const ut = new SpeechSynthesisUtterance('¡Excelente!');
                 ut.lang = 'es-ES';
-                ut.rate = 1;
                 window.speechSynthesis.speak(ut);
             }
 
@@ -716,7 +910,6 @@
                     const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
                     currentExercise = generateExercise(exerciseType, difficulty);
                     renderExercise(currentExercise);
-                    // Auto-reproducir audio
                     setTimeout(speakQuestion, 300);
                 }
             }, 1500);
@@ -736,9 +929,7 @@
 
             if (correctCount >= totalQuestions * 0.7) {
                 const nextWorld = WORLDS.find(w => !unlockedWorlds.includes(w.id));
-                if (nextWorld) {
-                    unlockedWorlds.push(nextWorld.id);
-                }
+                if (nextWorld) unlockedWorlds.push(nextWorld.id);
             }
 
             saveData();
