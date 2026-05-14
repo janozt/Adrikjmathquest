@@ -17,10 +17,14 @@
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes pop { 0%{transform:scale(0.8);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 
         .float { animation: float 3s ease-in-out infinite; }
         .pop { animation: pop 0.4s ease-out; }
         .shake { animation: shake 0.5s; }
+        .bounce { animation: bounce 2s ease-in-out infinite; }
+        .pulse { animation: pulse 2s ease-in-out infinite; }
 
         .category-card {
             background: white;
@@ -107,6 +111,22 @@
             gap: 8px;
             margin-bottom: 12px;
         }
+        .audio-btn:hover { transform: scale(1.05); }
+
+        .animal-sound-btn {
+            background: linear-gradient(135deg, #FFEAA7, #FDCB6E);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            font-size: 30px;
+            margin: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+        }
+        .animal-sound-btn:hover { transform: scale(1.1); }
+        .animal-sound-btn:active { transform: scale(0.95); }
 
         .streak-display {
             position: fixed;
@@ -153,10 +173,12 @@
             cursor: pointer;
             transition: all 0.3s;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 80px;
             background: white;
+            position: relative;
         }
         .animal-option:hover { border-color: #3498DB; transform: scale(1.05); }
         .animal-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
@@ -181,25 +203,16 @@
             font-weight: 900;
         }
 
-        /* LOGIN SCREEN STYLES */
         .login-header {
             text-align: center;
             margin-bottom: 32px;
         }
 
-        .logo-container {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-        }
-
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .logo-emoji {
+            font-size: 120px;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
         }
 
         .app-title {
@@ -210,6 +223,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         .app-subtitle {
@@ -217,25 +231,44 @@
             color: #7F8C8D;
         }
 
-        /* CATEGORY SCREEN STYLES */
         .category-header {
             text-align: center;
             margin-bottom: 40px;
         }
 
-        .category-logo {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        .category-logo-emoji {
+            font-size: 100px;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
         }
 
-        .category-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .object-counter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .count-object {
+            font-size: 48px;
+            animation: pop 0.5s ease-out;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .color-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 12px;
+            border: 3px solid #ddd;
+        }
+
+        .shape-display {
+            font-size: 80px;
+            margin: 20px 0;
         }
     </style>
 </head>
@@ -250,11 +283,9 @@
     <div id="login-screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
         <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 500px; width: 100%; text-align: center;">
             <div class="login-header">
-                <div class="logo-container float">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%234ECDC4'/%3E%3Cstop offset='100%25' stop-color='%2344A08D'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F7B733'/%3E%3Cstop offset='100%25' stop-color='%23FC4A1A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg%3E%3C!-- Monster 1 --%3E%3Ccircle cx='140' cy='180' r='90' fill='url(%23g1)'/%3E%3Ccircle cx='120' cy='160' r='25' fill='white'/%3E%3Ccircle cx='160' cy='160' r='25' fill='white'/%3E%3Ccircle cx='120' cy='160' r='12' fill='%232C3E50'/%3E%3Ccircle cx='160' cy='160' r='12' fill='%232C3E50'/%3E%3Cellipse cx='140' cy='200' rx='35' ry='25' fill='white'/%3E%3Crect x='100' y='130' width='80' height='20' rx='10' fill='%232C3E50'/%3E%3Crect x='90' y='110' width='100' height='30' fill='%232C3E50'/%3E%3Cpath d='M 90 110 L 85 90 L 100 110 Z' fill='%23F7B733'/%3E%3Cpath d='M 190 110 L 195 90 L 180 110 Z' fill='%23F7B733'/%3E%3C!-- Monster 2 --%3E%3Ccircle cx='280' cy='180' r='85' fill='url(%23g2)'/%3E%3Ccircle cx='260' cy='165' r='22' fill='white'/%3E%3Ccircle cx='300' cy='165' r='22' fill='white'/%3E%3Ccircle cx='260' cy='165' r='10' fill='%232C3E50'/%3E%3Ccircle cx='300' cy='165' r='10' fill='%232C3E50'/%3E%3Crect x='240' y='140' width='80' height='15' rx='8' fill='%232C3E50'/%3E%3Crect x='230' y='115' width='100' height='28' fill='%232C3E50'/%3E%3Cpath d='M 230 115 L 225 95 L 240 115 Z' fill='%23F7B733'/%3E%3Cpath d='M 330 115 L 335 95 L 320 115 Z' fill='%23F7B733'/%3E%3C!-- Lab coats --%3E%3Cpath d='M 70 240 L 210 240 L 200 280 L 80 280 Z' fill='white' stroke='%23BDC3C7' stroke-width='3'/%3E%3Cpath d='M 210 240 L 350 240 L 340 280 L 220 280 Z' fill='white' stroke='%23BDC3C7' stroke-width='3'/%3E%3C!-- Ties --%3E%3Cpath d='M 135 240 L 140 270 L 145 240 Z' fill='%23F39C12'/%3E%3Cpath d='M 275 240 L 280 270 L 285 240 Z' fill='%23E74C3C'/%3E%3C/ g%3E%3C/svg%3E" alt="Adrik Math Quest Logo">
-                </div>
+                <div class="logo-emoji bounce">🎓🧮✨</div>
                 <h1 class="app-title">ADRIK MATH QUEST</h1>
-                <p class="app-subtitle">Aprende matemáticas jugando 🎓</p>
+                <p class="app-subtitle">Aprende matemáticas jugando 🎯</p>
             </div>
             
             <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
@@ -271,9 +302,7 @@
     <div id="category-screen" class="hidden" style="min-height: 100vh; padding: 40px 20px;">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div class="category-header">
-                <div class="category-logo float">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%234ECDC4'/%3E%3Cstop offset='100%25' stop-color='%2344A08D'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23F7B733'/%3E%3Cstop offset='100%25' stop-color='%23FC4A1A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg%3E%3Ccircle cx='140' cy='180' r='90' fill='url(%23g1)'/%3E%3Ccircle cx='120' cy='160' r='25' fill='white'/%3E%3Ccircle cx='160' cy='160' r='25' fill='white'/%3E%3Ccircle cx='120' cy='160' r='12' fill='%232C3E50'/%3E%3Ccircle cx='160' cy='160' r='12' fill='%232C3E50'/%3E%3Cellipse cx='140' cy='200' rx='35' ry='25' fill='white'/%3E%3Crect x='100' y='130' width='80' height='20' rx='10' fill='%232C3E50'/%3E%3Crect x='90' y='110' width='100' height='30' fill='%232C3E50'/%3E%3Cpath d='M 90 110 L 85 90 L 100 110 Z' fill='%23F7B733'/%3E%3Cpath d='M 190 110 L 195 90 L 180 110 Z' fill='%23F7B733'/%3E%3Ccircle cx='280' cy='180' r='85' fill='url(%23g2)'/%3E%3Ccircle cx='260' cy='165' r='22' fill='white'/%3E%3Ccircle cx='300' cy='165' r='22' fill='white'/%3E%3Ccircle cx='260' cy='165' r='10' fill='%232C3E50'/%3E%3Ccircle cx='300' cy='165' r='10' fill='%232C3E50'/%3E%3Crect x='240' y='140' width='80' height='15' rx='8' fill='%232C3E50'/%3E%3Crect x='230' y='115' width='100' height='28' fill='%232C3E50'/%3E%3Cpath d='M 230 115 L 225 95 L 240 115 Z' fill='%23F7B733'/%3E%3Cpath d='M 330 115 L 335 95 L 320 115 Z' fill='%23F7B733'/%3E%3Cpath d='M 70 240 L 210 240 L 200 280 L 80 280 Z' fill='white' stroke='%23BDC3C7' stroke-width='3'/%3E%3Cpath d='M 210 240 L 350 240 L 340 280 L 220 280 Z' fill='white' stroke='%23BDC3C7' stroke-width='3'/%3E%3Cpath d='M 135 240 L 140 270 L 145 240 Z' fill='%23F39C12'/%3E%3Cpath d='M 275 240 L 280 270 L 285 240 Z' fill='%23E74C3C'/%3E%3C/g%3E%3C/svg%3E" alt="Adrik Math Quest">
-                </div>
+                <div class="category-logo-emoji float">🎓🧮✨</div>
                 <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
                 <div id="grade-info" style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700; display: inline-block;">
                 </div>
@@ -343,30 +372,168 @@
             '14': { level: 'Secundaria', grade: '3° año', category: 'secundaria' }
         };
 
-        // ANIMALES CON SUS SONIDOS
+        // ANIMALES CON SUS SONIDOS - Audio Context para generar sonidos
         const ANIMALS = {
-            'leon': { emoji: '🦁', sound: 'rugido', name: 'león' },
-            'gato': { emoji: '🐱', sound: 'maullido', name: 'gato' },
-            'perro': { emoji: '🐶', sound: 'ladrido', name: 'perro' },
-            'vaca': { emoji: '🐮', sound: 'mugido', name: 'vaca' },
-            'pollo': { emoji: '🐔', sound: 'cacareo', name: 'gallina' },
-            'oveja': { emoji: '🐑', sound: 'balido', name: 'oveja' },
-            'pato': { emoji: '🦆', sound: 'cuac', name: 'pato' },
-            'caballo': { emoji: '🐴', sound: 'relincho', name: 'caballo' },
-            'cerdo': { emoji: '🐷', sound: 'gruñido', name: 'cerdo' },
-            'rana': { emoji: '🐸', sound: 'croar', name: 'rana' }
+            'leon': { emoji: '🦁', sound: 'roar', name: 'león' },
+            'gato': { emoji: '🐱', sound: 'meow', name: 'gato' },
+            'perro': { emoji: '🐶', sound: 'bark', name: 'perro' },
+            'vaca': { emoji: '🐮', sound: 'moo', name: 'vaca' },
+            'pollo': { emoji: '🐔', sound: 'cluck', name: 'gallina' },
+            'oveja': { emoji: '🐑', sound: 'baa', name: 'oveja' },
+            'pato': { emoji: '🦆', sound: 'quack', name: 'pato' },
+            'caballo': { emoji: '🐴', sound: 'neigh', name: 'caballo' },
+            'cerdo': { emoji: '🐷', sound: 'oink', name: 'cerdo' },
+            'rana': { emoji: '🐸', sound: 'croak', name: 'rana' }
         };
 
-        // BANCO DE PREGUNTAS
+        // Generador de sonidos de animales
+        function playAnimalSound(animalKey) {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            const now = audioCtx.currentTime;
+            
+            switch(animalKey) {
+                case 'leon': // Rugido grave
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(150, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(100, now + 0.5);
+                    gainNode.gain.setValueAtTime(0.5, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.5);
+                    break;
+                    
+                case 'gato': // Maullido
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
+                    
+                case 'perro': // Ladrido
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    setTimeout(() => {
+                        const osc2 = audioCtx.createOscillator();
+                        const gain2 = audioCtx.createGain();
+                        osc2.connect(gain2);
+                        gain2.connect(audioCtx.destination);
+                        osc2.type = 'square';
+                        osc2.frequency.setValueAtTime(400, now + 0.25);
+                        osc2.frequency.exponentialRampToValueAtTime(300, now + 0.45);
+                        gain2.gain.setValueAtTime(0.4, now + 0.25);
+                        gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+                        osc2.start(now + 0.25);
+                        osc2.stop(now + 0.45);
+                    }, 0);
+                    break;
+                    
+                case 'vaca': // Mugido
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(300, now);
+                    oscillator.frequency.linearRampToValueAtTime(250, now + 0.4);
+                    oscillator.frequency.linearRampToValueAtTime(300, now + 0.8);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.8);
+                    break;
+                    
+                case 'pollo': // Cacareo
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(600, now);
+                    oscillator.frequency.setValueAtTime(500, now + 0.1);
+                    oscillator.frequency.setValueAtTime(600, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
+                    
+                case 'oveja': // Balido
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(500, now);
+                    oscillator.frequency.linearRampToValueAtTime(400, now + 0.4);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.4);
+                    break;
+                    
+                case 'pato': // Cuac
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+                    
+                case 'caballo': // Relincho
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(600, now);
+                    oscillator.frequency.exponentialRampToValueAtTime(800, now + 0.3);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, now + 0.6);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.6);
+                    break;
+                    
+                case 'cerdo': // Gruñido
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(200, now);
+                    oscillator.frequency.linearRampToValueAtTime(150, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.4, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.2);
+                    break;
+                    
+                case 'rana': // Croar
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, now);
+                    oscillator.frequency.linearRampToValueAtTime(350, now + 0.3);
+                    gainNode.gain.setValueAtTime(0.3, now);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    oscillator.start(now);
+                    oscillator.stop(now + 0.3);
+                    break;
+            }
+        }
+
+        // BANCO DE PREGUNTAS ESTILO ARBOLABC.COM - MÁS VARIADAS
         const QUESTION_BANK = {
             matematicas: {
                 inicial: [
                     { id: 'm_ini_1', q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 2, opts: [1, 2, 3] },
-                    { id: 'm_ini_2', q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
-                    { id: 'm_ini_3', q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { id: 'm_ini_4', q: '¿Qué color es?', visual: '<span style="display:inline-block;width:40px;height:40px;background:#E74C3C;border-radius:50%"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
-                    { id: 'm_ini_5', q: '¿Cuál es más grande?', visual: '🐘 🐜', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
-                    { id: 'm_ini_6', q: 'Cuenta: 1, 2, 3, ¿qué sigue?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] }
+                    { id: 'm_ini_2', q: '¿Cuántos hay?', visual: '⭐⭐⭐', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { id: 'm_ini_3', q: '¿Cuántos hay?', visual: '🎈🎈🎈🎈', type: 'count', ans: 4, opts: [3, 4, 5] },
+                    { id: 'm_ini_4', q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { id: 'm_ini_5', q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { id: 'm_ini_6', q: '¿Qué figura es?', visual: '🔺', type: 'shape', ans: 'triángulo', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { id: 'm_ini_7', q: '¿Qué figura es?', visual: '⬜', type: 'shape', ans: 'cuadrado', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { id: 'm_ini_8', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#E74C3C"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'm_ini_9', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#3498DB"></span>', type: 'color', ans: 'azul', opts: ['rojo', 'azul', 'verde'] },
+                    { id: 'm_ini_10', q: '¿Qué color es?', visual: '<span class="color-circle" style="background:#F1C40F"></span>', type: 'color', ans: 'amarillo', opts: ['rojo', 'azul', 'amarillo'] },
+                    { id: 'm_ini_11', q: '¿Cuál es más grande?', visual: '🐘 ', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
+                    { id: 'm_ini_12', q: '¿Cuál es más pequeño?', visual: '🐭 ', type: 'compare', ans: 'ratón', opts: ['ratón', 'elefante'] },
+                    { id: 'm_ini_13', q: 'Cuenta: 1, 2, 3, ¿qué sigue?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] },
+                    { id: 'm_ini_14', q: 'Cuenta: 1, 2, ¿qué sigue?', visual: '', type: 'sequence', ans: 3, opts: [2, 3, 4] },
+                    { id: 'm_ini_15', q: '¿Cuántos hay?', visual: '🍌🍌🍌', type: 'count', ans: 3, opts: [2, 3, 4] }
                 ],
                 primaria_baja: [
                     { id: 'm_pb_1', q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
@@ -374,7 +541,9 @@
                     { id: 'm_pb_3', q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
                     { id: 'm_pb_4', q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
                     { id: 'm_pb_5', q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] },
-                    { id: 'm_pb_6', q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] }
+                    { id: 'm_pb_6', q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] },
+                    { id: 'm_pb_7', q: '10 - 3 = ?', visual: '', type: 'sub', ans: 7, opts: [6, 7, 8, 9] },
+                    { id: 'm_pb_8', q: '4 + 5 = ?', visual: '', type: 'add', ans: 9, opts: [8, 9, 10, 11] }
                 ],
                 primaria_media: [
                     { id: 'm_pm_1', q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
@@ -400,19 +569,25 @@
             },
             lectura: {
                 inicial: [
-                    { id: 'l_ini_1', q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
-                    { id: 'l_ini_2', q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
-                    { id: 'l_ini_3', q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] },
-                    { id: 'l_ini_4', q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'] },
-                    { id: 'l_ini_5', q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'] },
-                    { id: 'l_ini_6', q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'] }
+                    { id: 'l_ini_1', q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'], playSound: true },
+                    { id: 'l_ini_2', q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'], playSound: true },
+                    { id: 'l_ini_3', q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'], playSound: true },
+                    { id: 'l_ini_4', q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'], playSound: true },
+                    { id: 'l_ini_5', q: '¿Qué animal hace este sonido?', visual: '🐔', type: 'animal_sound', ans: 'pollo', opts: ['pato', 'pollo', 'gallo'], playSound: true },
+                    { id: 'l_ini_6', q: '¿Qué animal hace este sonido?', visual: '🐑', type: 'animal_sound', ans: 'oveja', opts: ['vaca', 'oveja', 'caballo'], playSound: true },
+                    { id: 'l_ini_7', q: '¿Qué animal hace este sonido?', visual: '🦆', type: 'animal_sound', ans: 'pato', opts: ['pato', 'pollo', 'gallo'], playSound: true },
+                    { id: 'l_ini_8', q: '¿Qué animal hace este sonido?', visual: '🐴', type: 'animal_sound', ans: 'caballo', opts: ['vaca', 'oveja', 'caballo'], playSound: true },
+                    { id: 'l_ini_9', q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
+                    { id: 'l_ini_10', q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
+                    { id: 'l_ini_11', q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] },
+                    { id: 'l_ini_12', q: '¿Cuántas sílabas tiene "sol"?', visual: '', type: 'syllable', ans: 1, opts: [1, 2, 3] }
                 ],
                 primaria_baja: [
                     { id: 'l_pb_1', q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
                     { id: 'l_pb_2', q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
                     { id: 'l_pb_3', q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
                     { id: 'l_pb_4', q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] },
-                    { id: 'l_pb_5', q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'] }
+                    { id: 'l_pb_5', q: '¿Qué animal hace este sonido?', visual: '🐸', type: 'animal_sound', ans: 'rana', opts: ['pato', 'rana', 'gallo'], playSound: true }
                 ],
                 primaria_media: [
                     { id: 'l_pm_1', q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
@@ -540,9 +715,11 @@
             const bank = QUESTION_BANK[currentCategory][gradeCategory] || QUESTION_BANK[currentCategory]['primaria_baja'];
             const asked = askedQuestions[currentCategory] || [];
             
+            // Filtrar preguntas NO hechas
             const available = bank.filter(q => !asked.includes(q.id));
             
             if (available.length === 0) {
+                // Si se acabaron, reiniciar
                 askedQuestions[currentCategory] = [];
                 const randomIdx = Math.floor(Math.random() * bank.length);
                 askedQuestions[currentCategory].push(bank[randomIdx].id);
@@ -568,10 +745,26 @@
             document.getElementById('question-text').textContent = ex.q;
             
             const visual = document.getElementById('visual-container');
+            visual.innerHTML = '';
+            
             if (ex.visual) {
-                visual.innerHTML = `<div style="font-size: 64px;">${ex.visual}</div>`;
-            } else {
-                visual.innerHTML = '';
+                if (ex.type === 'animal_sound' && ex.playSound) {
+                    // Mostrar emoji del animal con botón de sonido
+                    visual.innerHTML = `
+                        <div style="font-size: 100px; margin: 20px 0;">${ex.visual}</div>
+                        <button class="animal-sound-btn pulse" onclick="playAnimalSound('${ex.ans}')" title="Escuchar sonido">
+                            🔊
+                        </button>
+                    `;
+                    // Reproducir sonido automáticamente después de 1 segundo
+                    setTimeout(() => playAnimalSound(ex.ans), 1000);
+                } else if (ex.type === 'count') {
+                    // Mostrar objetos para contar
+                    const objects = ex.visual.match(/[\p{Emoji}]/gu) || [];
+                    visual.innerHTML = '<div class="object-counter">' + objects.map(obj => `<div class="count-object">${obj}</div>`).join('') + '</div>';
+                } else {
+                    visual.innerHTML = `<div style="font-size: 64px;">${ex.visual}</div>`;
+                }
             }
             
             const optsContainer = document.getElementById('options-container');
@@ -582,7 +775,10 @@
                     const animal = ANIMALS[opt];
                     const btn = document.createElement('div');
                     btn.className = 'animal-option';
-                    btn.innerHTML = animal.emoji;
+                    btn.innerHTML = `
+                        <div style="font-size: 60px;">${animal.emoji}</div>
+                        <div style="font-size: 14px; font-weight: 700; margin-top: 8px; color: #2C3E50;">${animal.name}</div>
+                    `;
                     btn.onclick = () => handleAnimalAnswer(opt, btn);
                     optsContainer.appendChild(btn);
                 });
@@ -592,7 +788,8 @@
                     btn.className = 'option-btn';
                     
                     if (currentExercise.type === 'color') {
-                        btn.innerHTML = `<span style="display:inline-block;width:32px;height:32px;background:${getColorHex(opt)};border-radius:50%;margin-right:12px"></span>${opt}`;
+                        const colors = { 'rojo': '#E74C3C', 'azul': '#3498DB', 'verde': '#2ECC71', 'amarillo': '#F1C40F' };
+                        btn.innerHTML = `<span class="color-circle" style="background:${colors[opt] || '#95A5A6'}"></span>${opt}`;
                     } else if (ex.type === 'count') {
                         btn.className += ' number-option';
                         btn.textContent = opt;
@@ -627,7 +824,7 @@
                 setTimeout(() => {
                     const allBtns = document.querySelectorAll('.animal-option');
                     allBtns.forEach(b => {
-                        const animalKey = Object.keys(ANIMALS).find(k => ANIMALS[k].emoji === b.innerHTML);
+                        const animalKey = Object.keys(ANIMALS).find(k => ANIMALS[k].emoji === b.querySelector('div').innerHTML);
                         if (animalKey === currentExercise.ans) {
                             b.classList.add('selected');
                         }
@@ -648,16 +845,6 @@
                     nextQuestion();
                 }
             }, 1500);
-        }
-
-        function getColorHex(colorName) {
-            const colors = {
-                'rojo': '#E74C3C',
-                'azul': '#3498DB',
-                'verde': '#2ECC71',
-                'amarillo': '#F1C40F'
-            };
-            return colors[colorName] || '#95A5A6';
         }
 
         function handleAnswer(value, btn) {
