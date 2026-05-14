@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathQuest - Aprende Jugando</title>
+    <title>MathQuest - Aprende como en Smartick</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Nunito', sans-serif;
-            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #98D8C8 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -19,48 +19,71 @@
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
         @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
         @keyframes bounceIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
-        @keyframes starPop { 0%{transform:scale(0) rotate(0deg)} 50%{transform:scale(1.4) rotate(180deg)} 100%{transform:scale(1) rotate(360deg)} }
-        @keyframes particleFly { 0%{transform:translateY(0) scale(1);opacity:1} 100%{transform:translateY(-100px) scale(0);opacity:0} }
-        @keyframes streakGlow { 0%{box-shadow:0 0 0 0 rgba(255,215,0,0.7)} 70%{box-shadow:0 0 20px 10px rgba(255,215,0,0)} 100%{box-shadow:0 0 0 0 rgba(255,215,0,0)} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes timerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
 
         .float { animation: float 3s ease-in-out infinite; }
         .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .shake { animation: shake 0.5s ease-in-out; }
         .bounce-in { animation: bounceIn 0.5s ease-out; }
-        .star-pop { animation: starPop 0.6s ease-out; }
-        .particle-fly { animation: particleFly 1s ease-out forwards; }
-        .streak-glow { animation: streakGlow 0.8s ease-out; }
+        .slide-up { animation: slideUp 0.6s ease-out; }
 
-        .bubble {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
-            border: 4px solid rgba(255,255,255,0.8);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .category-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
             cursor: pointer;
             transition: all 0.3s;
-            position: relative;
+            text-align: center;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        .category-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        .category-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
         }
 
-        .bubble:hover:not(.locked) { transform: translateY(-8px) scale(1.05); }
-        .bubble.locked { opacity: 0.6; cursor: not-allowed; filter: grayscale(0.5); }
-        .bubble-icon { font-size: 60px; margin-bottom: 8px; }
-        .bubble-label { font-weight: 800; font-size: 14px; color: #2C3E50; text-align: center; }
-        .lock-overlay {
-            position: absolute;
-            font-size: 48px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
+        .category-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 64px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .category-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #2C3E50;
+            margin-bottom: 16px;
+        }
+
+        .category-desc {
+            font-size: 15px;
+            color: #7F8C8D;
+            line-height: 1.6;
+        }
+
+        .timer-badge {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
         }
 
         .btn {
@@ -97,108 +120,10 @@
             justify-content: center;
             gap: 12px;
             min-height: 60px;
-            position: relative;
-            overflow: hidden;
         }
         .option-btn:hover { border-color: #3498DB; }
         .option-btn.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.05); }
         .option-btn.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
-
-        .objects-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
-            padding: 30px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 20px;
-            margin: 20px 0;
-            min-height: 120px;
-            align-items: center;
-        }
-
-        .counting-object {
-            font-size: 56px;
-            animation: bounceIn 0.5s ease-out;
-            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.2));
-        }
-
-        .gumball-machine {
-            width: 180px;
-            height: 260px;
-            position: relative;
-            display: inline-block;
-            margin: 0 15px;
-            cursor: pointer;
-            transition: transform 0.3s;
-            border: 6px solid transparent;
-            border-radius: 20px;
-            padding: 10px;
-        }
-
-        .gumball-machine:hover { transform: scale(1.08); }
-        .gumball-machine.selected { border-color: #2ECC71; background: rgba(46,204,113,0.1); border-radius: 20px; }
-        .gumball-machine.wrong { border-color: #E74C3C; background: rgba(231,76,60,0.1); border-radius: 20px; animation: shake 0.5s; }
-
-        .gumball-globe {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 4px solid rgba(0,0,0,0.15);
-            overflow: hidden;
-            background: rgba(255,255,255,0.8);
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .gumballs-filled {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 3px;
-            padding: 10px;
-        }
-
-        .gumball {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
-        }
-
-        .gumball-base {
-            width: 90px;
-            height: 80px;
-            background: linear-gradient(180deg, #E74C3C, #C0392B);
-            margin: 8px auto 0;
-            border-radius: 0 0 16px 16px;
-            position: relative;
-        }
-
-        .gumball-base::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50px;
-            height: 35px;
-            background: #95A5A6;
-            border-radius: 8px;
-        }
-
-        .progress-bar {
-            background: rgba(255,255,255,0.3);
-            border-radius: 20px;
-            height: 24px;
-            overflow: hidden;
-            border: 3px solid white;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #2ECC71, #27AE60);
-            height: 100%;
-            transition: width 0.8s;
-            border-radius: 17px;
-        }
 
         .hidden { display: none !important; }
         .card {
@@ -226,46 +151,41 @@
         }
         .audio-btn:hover { transform: scale(1.1); }
 
-        .shape-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 30px;
+        .progress-container {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            height: 30px;
+            overflow: hidden;
+            border: 3px solid white;
             margin: 20px 0;
         }
+        .progress-fill {
+            background: linear-gradient(90deg, #2ECC71, #27AE60);
+            height: 100%;
+            transition: width 0.8s;
+            border-radius: 17px;
+        }
 
-        .shape-option {
-            width: 120px;
-            height: 120px;
+        .timer-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background: white;
-            border: 4px solid #E0E0E0;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
+            padding: 16px 24px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 20px;
+            color: #2C3E50;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
             align-items: center;
-            justify-content: center;
-            padding: 15px;
+            gap: 12px;
+            z-index: 1000;
         }
-        .shape-option:hover { border-color: #3498DB; transform: scale(1.08); }
-        .shape-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
-        .shape-option.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
+        .timer-display.active { display: flex; animation: timerPulse 2s ease-in-out infinite; }
+        .timer-icon { font-size: 32px; }
 
-        .feedback {
-            padding: 16px 32px;
-            border-radius: 16px;
-            font-size: 24px;
-            font-weight: 800;
-            display: inline-block;
-            margin-top: 20px;
-            position: relative;
-        }
-        .feedback.correct { background: #2ECC71; color: white; }
-        .feedback.wrong { background: #E74C3C; color: white; }
-
-        /* STREAK COUNTER */
-        .streak-container {
+        .streak-display {
             position: fixed;
             top: 80px;
             right: 20px;
@@ -281,106 +201,145 @@
             align-items: center;
             gap: 8px;
         }
-        .streak-container.show { display: flex; animation: streakGlow 0.8s ease-out; }
-        .streak-icon { font-size: 28px; }
+        .streak-display.show { display: flex; }
 
-        /* PARTICLES */
-        .particle {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .star {
-            font-size: 40px;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9998;
-        }
-
-        .habitat-option {
-            background: white;
-            border: 4px solid #E0E0E0;
+        .feedback {
+            padding: 16px 32px;
             border-radius: 16px;
-            padding: 20px;
-            margin: 10px;
+            font-size: 24px;
+            font-weight: 800;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .feedback.correct { background: #2ECC71; color: white; }
+        .feedback.wrong { background: #E74C3C; color: white; }
+
+        .question-visual {
+            font-size: 80px;
+            margin: 20px 0;
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        .coding-block {
+            background: #f8f9fa;
+            border: 3px solid #dee2e6;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 8px 0;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 140px;
-            min-height: 100px;
-            gap: 8px;
         }
-        .habitat-option:hover { border-color: #3498DB; transform: scale(1.05); }
-        .habitat-option.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.1); }
-        .habitat-option.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
+        .coding-block:hover { border-color: #667eea; background: #e9ecef; }
+        .coding-block.selected { border-color: #2ECC71; background: #d4edda; }
+
+        .thinking-scenario {
+            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            font-size: 18px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
-    <!-- STREAK DISPLAY -->
-    <div id="streak-display" class="streak-container">
-        <span class="streak-icon">🔥</span>
+    <!-- TIMER -->
+    <div id="timer-display" class="timer-display">
+        <span class="timer-icon">⏱️</span>
+        <span id="timer-text">15:00</span>
+    </div>
+
+    <!-- STREAK -->
+    <div id="streak-display" class="streak-display">
+        <span>🔥</span>
         <span id="streak-count">0</span>
     </div>
 
-    <!-- LOGIN SCREEN -->
-    <div id="login-screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
+    <!-- LOGIN -->
+    <div id="login-screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
         <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 450px; width: 100%; text-align: center;">
             <div class="float" style="font-size: 80px; margin-bottom: 16px;">🎓</div>
             <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 8px; color: #2C3E50;">MathQuest</h1>
-            <p style="color: #7F8C8D; margin-bottom: 32px; font-size: 16px;">Aprende jugando como en Smartick</p>
+            <p style="color: #7F8C8D; margin-bottom: 32px; font-size: 16px;">Aprende como en Smartick - 4 áreas de aprendizaje</p>
             <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
             <input id="age-input" type="number" placeholder="Tu edad (4-14)" min="4" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 24px;">
             <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar Aventura!</button>
         </div>
     </div>
 
-    <!-- WORLD MAP SCREEN -->
-    <div id="world-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(180deg, #FFB347 0%, #FFCC99 40%, #DEB887 100%); padding-bottom: 100px;">
-        <header style="background: rgba(255,255,255,0.9); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
-            <div>
-                <h1 id="user-greeting" style="font-size: 24px; font-weight: 900; color: #2C3E50;"></h1>
-                <span id="age-badge" style="background: #3498DB; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;"></span>
+    <!-- CATEGORY SELECTION -->
+    <div id="category-screen" class="hidden" style="min-height: 100vh; padding: 40px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
+                <div class="timer-badge">
+                    <span>⏱️</span>
+                    <span>Solo 15 minutos al día</span>
+                </div>
+                <div style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 16px; margin-top: 16px; font-weight: 700;">
+                    🧠 Inteligencia Artificial: Sesiones personalizadas para ti
+                </div>
             </div>
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <div id="xp-badge" style="background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 20px; padding: 8px 16px; font-weight: 800;"></div>
-                <button onclick="logout()" style="background: #E74C3C; color: white; border: none; border-radius: 12px; padding: 8px 16px; cursor: pointer; font-weight: 700; font-family: 'Nunito';">🚪</button>
-            </div>
-        </header>
 
-        <div style="max-width: 600px; margin: 24px auto; padding: 0 20px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; color: #2C3E50;">
-                <span id="level-text"></span>
-                <span id="xp-text"></span>
-            </div>
-            <div class="progress-bar">
-                <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
-            </div>
-        </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; margin-top: 40px;">
+                <div class="category-card slide-up" onclick="selectCategory('matematicas')" style="animation-delay: 0.1s">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #667eea, #764ba2)">📐</div>
+                    <div class="category-title">Matemáticas</div>
+                    <div class="category-desc">
+                        Cálculo, geometría, lógica y resolución de problemas. 
+                        Alcanza tu máximo potencial matemático.
+                    </div>
+                    <div style="margin-top: 16px; font-weight: 800; color: #667eea;">🎯 Ejercicios adaptativos</div>
+                </div>
 
-        <div style="max-width: 900px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 0 20px;">
-            <h2 style="font-size: 28px; font-weight: 900; color: #2C3E50;"> 🌍 Mundos de Aprendizaje</h2>
-            <div id="worlds-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;"></div>
-        </div>
+                <div class="category-card slide-up" onclick="selectCategory('lectura')" style="animation-delay: 0.2s">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c)">📚</div>
+                    <div class="category-title">Lectura</div>
+                    <div class="category-desc">
+                        Comprensión lectora, vocabulario, ortografía y gramática. 
+                        Desde letras hasta textos complejos.
+                    </div>
+                    <div style="margin-top: 16px; font-weight: 800; color: #f5576c;">📖 Mejora tu lectura</div>
+                </div>
 
-        <div id="character" class="float" style="position: fixed; bottom: 20px; right: 20px; font-size: 80px; cursor: pointer;"></div>
-        <div class="pulse" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FFD700, #FFA500); padding: 16px 32px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); font-weight: 800; font-size: 16px; color: #2C3E50;">
-            🎯 Reto Diario: Completa 3 ejercicios
+                <div class="category-card slide-up" onclick="selectCategory('coding')" style="animation-delay: 0.3s">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe)">💻</div>
+                    <div class="category-title">Coding</div>
+                    <div class="category-desc">
+                        Programación, pensamiento computacional y lógica de algoritmos. 
+                        Prepárate para el futuro.
+                    </div>
+                    <div style="margin-top: 16px; font-weight: 800; color: #00f2fe;">🤖 Aprende a programar</div>
+                </div>
+
+                <div class="category-card slide-up" onclick="selectCategory('thinking')" style="animation-delay: 0.4s">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7)">🧩</div>
+                    <div class="category-title">Thinking</div>
+                    <div class="category-desc">
+                        Pensamiento crítico, toma de decisiones y razonamiento lógico. 
+                        Aprende a pensar antes de actuar.
+                    </div>
+                    <div style="margin-top: 16px; font-weight: 800; color: #43e97b;">💭 Desarrolla tu mente</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- EXERCISE SCREEN -->
     <div id="exercise-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(180deg, #E0F6FF 0%, #98D8C8 100%); padding: 20px;">
         <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <button onclick="showWorld()" class="btn" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">← Volver</button>
-            <div style="background: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 18px;" id="question-counter">1 / 10</div>
+            <button onclick="showCategories()" class="btn" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">← Volver</button>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <div style="background: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 18px;" id="question-counter">1 / 10</div>
+                <div id="category-badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 800;"></div>
+            </div>
         </div>
 
         <div class="card pop" style="max-width: 800px; margin: 0 auto; text-align: center;">
-            <button class="audio-btn" id="audio-btn" onclick="speakQuestion()">
+            <button class="audio-btn" onclick="speakQuestion()">
                 🔊 Escuchar
             </button>
             <div style="font-size: 18px; color: #7F8C8D; margin-bottom: 8px;" id="instruction-text"></div>
@@ -392,762 +351,290 @@
     </div>
 
     <script>
-        const AGE_CONFIG = {
-            '4-5': {
-                label: 'Preescolar',
-                worlds: ['numeros', 'colores', 'formas'],
-                exercises: ['counting', 'colors', 'full-empty', 'habitats', 'shapes'],
-                maxDifficulty: 3,
-                character: '🐻'
-            },
-            '6-7': {
-                label: 'Básico',
-                worlds: ['numeros', 'colores', 'formas', 'sumas', 'restas'],
-                exercises: ['addsub', 'compare', 'full-empty', 'habitats', 'shapes'],
-                maxDifficulty: 5,
-                character: '🦊'
-            },
-            '8-9': {
-                label: 'Intermedio',
-                worlds: ['numeros', 'sumas', 'restas', 'multiplicacion', 'division_basica'],
-                exercises: ['muldiv', 'problems', 'logic', 'shapes'],
-                maxDifficulty: 7,
-                character: '🦁'
-            },
-            '10-12': {
-                label: 'Avanzado',
-                worlds: ['fracciones', 'geometria', 'logica', 'problemas'],
-                exercises: ['fractions', 'geometry', 'algebra'],
-                maxDifficulty: 10,
-                character: '🦅'
-            },
-            '13-14': {
-                label: 'Experto',
-                worlds: ['algebra', 'razonamiento', 'estadistica', 'desafios'],
-                exercises: ['algebra', 'reasoning', 'advanced'],
-                maxDifficulty: 12,
-                character: ''
-            }
+        // CATEGORÍAS
+        const CATEGORIES = {
+            matematicas: { name: 'Matemáticas', icon: '📐', color: '#667eea' },
+            lectura: { name: 'Lectura', icon: '📚', color: '#f5576c' },
+            coding: { name: 'Coding', icon: '💻', color: '#00f2fe' },
+            thinking: { name: 'Thinking', icon: '🧩', color: '#43e97b' }
         };
 
-        const WORLDS = [
-            { id: 'numeros', name: 'Números', icon: '', color: '#FF6B6B' },
-            { id: 'colores', name: 'Colores', icon: '🎨', color: '#4ECDC4' },
-            { id: 'formas', name: 'Formas', icon: '', color: '#FFE66D' },
-            { id: 'sumas', name: 'Sumas', icon: '➕', color: '#95E1D3' },
-            { id: 'restas', name: 'Restas', icon: '➖', color: '#F38181' },
-            { id: 'multiplicacion', name: 'Multiplicar', icon: '✖️', color: '#AA96DA' }
-        ];
+        // BANCO DE PREGUNTAS POR CATEGORÍA
+        const QUESTION_BANK = {
+            matematicas: [
+                { type: 'counting', q: '¿Cuántos hay?', visual: '🍎🍎🍎', ans: 3, opts: [2, 3, 4, 5] },
+                { type: 'counting', q: 'Cuenta las estrellas', visual: '⭐⭐⭐⭐⭐', ans: 5, opts: [4, 5, 6, 7] },
+                { type: 'add', q: '2 + 3 = ?', visual: '', ans: 5, opts: [4, 5, 6, 7] },
+                { type: 'add', q: '4 + 5 = ?', visual: '', ans: 9, opts: [8, 9, 10, 11] },
+                { type: 'sub', q: '8 - 3 = ?', visual: '', ans: 5, opts: [4, 5, 6, 7] },
+                { type: 'sub', q: '10 - 4 = ?', visual: '', ans: 6, opts: [5, 6, 7, 8] },
+                { type: 'mul', q: '3 × 2 = ?', visual: '', ans: 6, opts: [5, 6, 7, 8] },
+                { type: 'mul', q: '4 × 3 = ?', visual: '', ans: 12, opts: [10, 11, 12, 13] },
+                { type: 'geometry', q: '¿Cuántos lados tiene un triángulo?', visual: '🔺', ans: 3, opts: [2, 3, 4, 5] },
+                { type: 'geometry', q: '¿Qué figura es un círculo?', visual: '⭕ □ 🔺', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo', 'rectángulo'] },
+                { type: 'logic', q: '¿Qué número sigue? 2, 4, 6, 8, ?', visual: '', ans: 10, opts: [9, 10, 11, 12] },
+                { type: 'logic', q: '¿Qué número falta? 5, 10, ?, 20', visual: '', ans: 15, opts: [12, 15, 18, 20] }
+            ],
+            lectura: [
+                { type: 'vocabulary', q: '¿Qué palabra significa lo contrario de "grande"?', visual: '', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto', 'largo'] },
+                { type: 'vocabulary', q: '¿Cuál es el sinónimo de "feliz"?', visual: '😊', ans: 'contento', opts: ['triste', 'contento', 'enojado', 'cansado'] },
+                { type: 'spelling', q: '¿Cómo se escribe?', visual: '🐘', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante', 'elefante'] },
+                { type: 'comprehension', q: 'El sol es...', visual: '☀️', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna', 'un cometa'] },
+                { type: 'grammar', q: '¿Cuál es un sustantivo?', visual: '', ans: 'casa', opts: ['correr', 'casa', 'rápido', 'y'] },
+                { type: 'reading', q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱💤', ans: 'duerme', opts: ['come', 'duerme', 'juega', 'corre'] },
+                { type: 'vocabulary', q: '¿Qué palabra rima con "mesa"?', visual: '', ans: 'beso', opts: ['silla', 'beso', 'casa', 'libro'] },
+                { type: 'comprehension', q: 'Si llueve, necesito...', visual: '🌧️', ans: 'paraguas', opts: ['sombrero', 'paraguas', 'gafas', 'guantes'] }
+            ],
+            coding: [
+                { type: 'sequence', q: '¿Qué viene después?', visual: '🔴  🔴 🔵 ?', ans: '🔴', opts: ['🔴', '', '🟢', '🟡'] },
+                { type: 'sequence', q: 'Completa: ▲ ▼ ▲ ▼ ?', visual: '', ans: '▲', opts: ['▲', '▼', '▶', '◀'] },
+                { type: 'logic', q: 'Si A=1, B=2, ¿cuánto es C?', visual: '', ans: 3, opts: [2, 3, 4, 5] },
+                { type: 'pattern', q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', ans: 7, opts: [6, 7, 8, 9] },
+                { type: 'algorithm', q: 'Instrucciones: Avanza 2, gira derecha. ¿Dónde llegas?', visual: '➡️➡️⬇️', ans: 'abajo-derecha', opts: ['arriba', 'abajo-derecha', 'izquierda', 'centro'] },
+                { type: 'debug', q: '¿Qué está mal? 1+2=4', visual: '', ans: 'el resultado', opts: ['el 1', 'el +', 'el resultado', 'nada'] },
+                { type: 'sequence', q: 'Ordena: 3, 1, 2 → ?', visual: '', ans: '1, 2, 3', opts: ['3, 2, 1', '1, 2, 3', '2, 1, 3', '1, 3, 2'] },
+                { type: 'condition', q: 'Si x=5 y x>3, entonces...', visual: '', ans: 'verdadero', opts: ['verdadero', 'falso', 'igual', 'ninguno'] }
+            ],
+            thinking: [
+                { type: 'decision', q: 'Tienes 2 manzanas y regalas 1. ¿Cuántas te quedan?', visual: '🍎🍎', ans: 1, opts: [0, 1, 2, 3] },
+                { type: 'reasoning', q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', ans: 4, opts: [2, 3, 4, 5] },
+                { type: 'problem', q: 'Ana tiene 5 años. Luis tiene 3 años más que Ana. ¿Cuántos años tiene Luis?', visual: '', ans: 8, opts: [6, 7, 8, 9] },
+                { type: 'logic', q: '¿Qué es más pesado?', visual: '🪶 vs 🪨', ans: 'la piedra', opts: ['la pluma', 'la piedra', 'pesan igual', 'no se sabe'] },
+                { type: 'critical', q: 'Si hoy es lunes, ¿qué día fue ayer?', visual: '', ans: 'domingo', opts: ['martes', 'domingo', 'miércoles', 'viernes'] },
+                { type: 'decision', q: 'Necesitas llegar a tiempo. ¿Qué haces?', visual: '⏰', ans: 'salir temprano', opts: ['dormir más', 'salir temprano', 'correr', 'esperar'] },
+                { type: 'reasoning', q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', ans: '5:00', opts: ['4:00', '5:00', '6:00', '1:00'] },
+                { type: 'problem', q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay en total?', visual: '🐄🐄🐔🐔', ans: 16, opts: [10, 12, 14, 16] }
+            ]
+        };
 
+        // ESTADO
         let user = null;
-        let ageGroup = null;
-        let stats = { xp: 0, stars: 0, level: 1, completedWorlds: [], streak: 0, bestStreak: 0 };
-        let unlockedWorlds = [];
+        let currentCategory = null;
+        let askedQuestions = { matematicas: [], lectura: [], coding: [], thinking: [] };
         let currentExercise = null;
-        let difficulty = 1;
         let questionNum = 1;
         let correctCount = 0;
-        const totalQuestions = 10;
+        let streak = 0;
+        let timer = null;
+        let timeLeft = 900; // 15 minutos
+        let stats = { xp: 0, stars: 0, level: 1 };
 
-        // AUDIO CONTEXT para efectos de sonido
+        // AUDIO
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
-        // ==========================================
-        // EFECTOS DE SONIDO
-        // ==========================================
         function playSound(type) {
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // TIMER
+        function startTimer() {
+            timeLeft = 900;
+            updateTimerDisplay();
+            document.getElementById('timer-display').classList.add('active');
             
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            switch(type) {
-                case 'correct':
-                    // Sonido alegre de acierto (acorde mayor)
-                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                    oscillator.start(audioCtx.currentTime);
-                    oscillator.stop(audioCtx.currentTime + 0.4);
-                    break;
-
-                case 'wrong':
-                    // Sonido suave de error
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
-                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    oscillator.start(audioCtx.currentTime);
-                    oscillator.stop(audioCtx.currentTime + 0.3);
-                    break;
-
-                case 'streak':
-                    // Sonido especial para racha (fanfarria)
-                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.frequency.value = freq;
-                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.3);
-                        osc.start(audioCtx.currentTime + i * 0.1);
-                        osc.stop(audioCtx.currentTime + i * 0.1 + 0.3);
-                    });
-                    break;
-
-                case 'star':
-                    // Sonido de estrella (brillo)
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(1046.50, audioCtx.currentTime); // C6
-                    oscillator.frequency.exponentialRampToValueAtTime(1567.98, audioCtx.currentTime + 0.1); // G6
-                    gainNode.gain.setValueAtTime(0.25, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    oscillator.start(audioCtx.currentTime);
-                    oscillator.stop(audioCtx.currentTime + 0.3);
-                    break;
-            }
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    finishSession();
+                }
+            }, 1000);
         }
 
-        // ==========================================
-        // EFECTOS VISUALES
-        // ==========================================
-        function createParticles(x, y, color = '#FFD700') {
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle particle-fly';
-                particle.innerHTML = '⭐';
-                particle.style.left = x + 'px';
-                particle.style.top = y + 'px';
-                particle.style.fontSize = (20 + Math.random() * 20) + 'px';
-                particle.style.transform = `rotate(${Math.random() * 360}deg)`;
-                
-                const angle = (Math.PI * 2 * i) / 8;
-                const velocity = 100 + Math.random() * 100;
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity - 100;
-                
-                particle.style.setProperty('--tx', tx + 'px');
-                particle.style.setProperty('--ty', ty + 'px');
-                
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 1000);
-            }
+        function updateTimerDisplay() {
+            const mins = Math.floor(timeLeft / 60);
+            const secs = timeLeft % 60;
+            document.getElementById('timer-text').textContent = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function createStars(x, y) {
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    const star = document.createElement('div');
-                    star.className = 'star star-pop';
-                    star.textContent = '⭐';
-                    star.style.left = (x + (Math.random() - 0.5) * 200) + 'px';
-                    star.style.top = (y + (Math.random() - 0.5) * 200) + 'px';
-                    star.style.fontSize = (30 + Math.random() * 30) + 'px';
-                    document.body.appendChild(star);
-                    setTimeout(() => star.remove(), 1000);
-                }, i * 100);
+        function selectCategory(cat) {
+            currentCategory = cat;
+            document.getElementById('category-screen').classList.add('hidden');
+            document.getElementById('exercise-screen').classList.remove('hidden');
+            startTimer();
+            nextQuestion();
+        }
+
+        function getNonRepeatingQuestion() {
+            const bank = QUESTION_BANK[currentCategory];
+            const asked = askedQuestions[currentCategory];
+            const available = bank.filter((_, idx) => !asked.includes(idx));
+            
+            if (available.length === 0) {
+                askedQuestions[currentCategory] = [];
+                asked.length = 0;
             }
+            
+            const randomIdx = Math.floor(Math.random() * available.length);
+            const questionIdx = bank.indexOf(available[randomIdx]);
+            askedQuestions[currentCategory].push(questionIdx);
+            
+            return available[randomIdx];
+        }
+
+        function nextQuestion() {
+            currentExercise = getNonRepeatingQuestion();
+            document.getElementById('question-counter').textContent = `${questionNum} / 10`;
+            document.getElementById('category-badge').textContent = CATEGORIES[currentCategory].name;
+            document.getElementById('category-badge').style.background = CATEGORIES[currentCategory].color;
+            
+            renderExercise(currentExercise);
+            setTimeout(speakQuestion, 500);
+        }
+
+        function renderExercise(ex) {
+            document.getElementById('instruction-text').textContent = 'Responde correctamente:';
+            document.getElementById('question-text').textContent = ex.q;
+            
+            const visual = document.getElementById('visual-container');
+            if (ex.visual) {
+                visual.innerHTML = `<div class="question-visual">${ex.visual}</div>`;
+            } else {
+                visual.innerHTML = '';
+            }
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            ex.opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optsContainer.appendChild(btn);
+            });
+            
+            document.getElementById('feedback-container').innerHTML = '';
+        }
+
+        function handleAnswer(value, btn) {
+            if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
+            
+            const isCorrect = String(value) === String(currentExercise.ans);
+            
+            if (isCorrect) {
+                btn.classList.add('selected');
+                correctCount++;
+                streak++;
+                playSound('correct');
+                updateStreak();
+            } else {
+                btn.classList.add('wrong');
+                streak = 0;
+                playSound('wrong');
+                updateStreak();
+            }
+            
+            const feedback = document.getElementById('feedback-container');
+            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
+                ${isCorrect ? '¡Excelente! 🎉' : '💪 ¡Sigue intentando!'}
+            </div>`;
+            
+            setTimeout(() => {
+                if (questionNum >= 10) {
+                    finishSession();
+                } else {
+                    questionNum++;
+                    nextQuestion();
+                }
+            }, 1500);
         }
 
         function updateStreak() {
-            const streakEl = document.getElementById('streak-display');
-            const countEl = document.getElementById('streak-count');
-            
-            if (stats.streak > 1) {
-                streakEl.classList.add('show');
-                countEl.textContent = stats.streak;
-                
-                if (stats.streak === 3) {
-                    playSound('streak');
-                    createStars(window.innerWidth / 2, window.innerHeight / 2);
-                } else if (stats.streak % 5 === 0) {
-                    playSound('streak');
-                    createStars(window.innerWidth / 2, window.innerHeight / 2);
-                }
+            const el = document.getElementById('streak-display');
+            if (streak > 1) {
+                el.classList.add('show');
+                document.getElementById('streak-count').textContent = streak;
             } else {
-                streakEl.classList.remove('show');
+                el.classList.remove('show');
             }
-        }
-
-        const SHAPES = {
-            circle: `<svg viewBox="0 0 100 100" width="80" height="80"><circle cx="50" cy="50" r="40" fill="#FF6B6B" stroke="#E74C3C" stroke-width="3"/></svg>`,
-            square: `<svg viewBox="0 0 100 100" width="80" height="80"><rect x="15" y="15" width="70" height="70" rx="4" fill="#3498DB" stroke="#2980B9" stroke-width="3"/></svg>`,
-            triangle: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,10 90,85 10,85" fill="#2ECC71" stroke="#27AE60" stroke-width="3"/></svg>`,
-            star: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,5 61,35 95,35 68,55 79,90 50,68 21,90 32,55 5,35 39,35" fill="#F1C40F" stroke="#F39C12" stroke-width="3"/></svg>`,
-            heart: `<svg viewBox="0 0 100 100" width="80" height="80"><path d="M50,88 C25,65 5,50 5,30 C5,15 15,5 30,5 C40,5 48,12 50,18 C52,12 60,5 70,5 C85,5 95,15 95,30 C95,50 75,65 50,88Z" fill="#E74C3C" stroke="#C0392B" stroke-width="3"/></svg>`,
-            diamond: `<svg viewBox="0 0 100 100" width="80" height="80"><polygon points="50,5 95,50 50,95 5,50" fill="#9B59B6" stroke="#8E44AD" stroke-width="3"/></svg>`
-        };
-
-        function generateExercise(type, diff) {
-            switch(type) {
-                case 'counting':
-                    const count = Math.floor(Math.random() * Math.max(2, diff * 3)) + 1;
-                    const items = ['🍎', '', '🎈', '', '🌟', ''];
-                    let item;
-                    do { item = items[Math.floor(Math.random() * items.length)]; } while(item === '');
-                    
-                    return {
-                        type: 'counting',
-                        instruction: 'Cuenta los objetos.',
-                        question: '¿Cuántos hay?',
-                        count: count,
-                        item: item,
-                        correctAnswer: count,
-                        options: generateNumberOptions(count)
-                    };
-
-                case 'colors':
-                    const colors = [
-                        { name: 'Verde', hex: '#2ECC71' },
-                        { name: 'Rojo', hex: '#E74C3C' },
-                        { name: 'Azul', hex: '#3498DB' },
-                        { name: 'Amarillo', hex: '#F1C40F' }
-                    ];
-                    const targetColor = colors[Math.floor(Math.random() * colors.length)];
-                    // CORREGIDO: Solo UNA fruta, sin revelar el color en la pregunta
-                    const fruits = [
-                        { emoji: '🍎', name: 'fruta' },
-                        { emoji: '', name: 'fruta' },
-                        { emoji: '🍊', name: 'fruta' },
-                        { emoji: '', name: 'fruta' }
-                    ];
-                    const selectedFruit = fruits[Math.floor(Math.random() * fruits.length)];
-                    
-                    return {
-                        type: 'colors',
-                        instruction: 'Marca las etiquetas correctas.',
-                        question: '¿De qué color es?', // CORREGIDO: Sin mencionar el objeto
-                        visual: selectedFruit.emoji,
-                        correctAnswer: targetColor.name,
-                        options: colors
-                    };
-
-                case 'shapes':
-                    const allShapes = [
-                        { name: 'Círculo', svg: SHAPES.circle },
-                        { name: 'Cuadrado', svg: SHAPES.square },
-                        { name: 'Triángulo', svg: SHAPES.triangle },
-                        { name: 'Estrella', svg: SHAPES.star },
-                        { name: 'Corazón', svg: SHAPES.heart },
-                        { name: 'Diamante', svg: SHAPES.diamond }
-                    ];
-                    const targetShape = allShapes[Math.floor(Math.random() * allShapes.length)];
-                    const wrongShapes = allShapes.filter(s => s.name !== targetShape.name).sort(() => Math.random()-0.5).slice(0, 3);
-                    
-                    return {
-                        type: 'shapes',
-                        instruction: 'Selecciona la figura correcta.',
-                        question: `Toca el ${targetShape.name}`,
-                        correctAnswer: targetShape.name,
-                        options: [targetShape, ...wrongShapes].sort(() => Math.random()-0.5)
-                    };
-
-                case 'full-empty':
-                    const fullSide = Math.random() > 0.5 ? 'left' : 'right';
-                    return {
-                        type: 'full-empty',
-                        instruction: 'Responde la pregunta.',
-                        question: '¿Cuál está llena?',
-                        correctAnswer: fullSide,
-                        options: null
-                    };
-
-                case 'habitats':
-                    const animals = [
-                        { name: 'elefante', emoji: '🐘', gender: 'el', habitat: 'Sabana', wrong: ['Océano', 'Cielo'] },
-                        { name: 'tiburón', emoji: '🦈', gender: 'el', habitat: 'Océano', wrong: ['Sabana', 'Cielo'] },
-                        { name: 'águila', emoji: '🦅', gender: 'la', habitat: 'Cielo', wrong: ['Océano', 'Sabana'] },
-                        { name: 'oso', emoji: '🐻', gender: 'el', habitat: 'Bosque', wrong: ['Océano', 'Cielo'] },
-                        { name: 'pez', emoji: '🐠', gender: 'el', habitat: 'Océano', wrong: ['Sabana', 'Cielo'] },
-                        { name: 'leona', emoji: '🦁', gender: 'la', habitat: 'Sabana', wrong: ['Océano', 'Cielo'] },
-                        { name: 'ballena', emoji: '🐋', gender: 'la', habitat: 'Océano', wrong: ['Sabana', 'Cielo'] },
-                        { name: 'mariposa', emoji: '🦋', gender: 'la', habitat: 'Cielo', wrong: ['Océano', 'Bosque'] },
-                        { name: 'conejo', emoji: '🐰', gender: 'el', habitat: 'Bosque', wrong: ['Océano', 'Cielo'] },
-                        { name: 'tortuga', emoji: '🐢', gender: 'la', habitat: 'Sabana', wrong: ['Océano', 'Cielo'] }
-                    ];
-                    const animal = animals[Math.floor(Math.random() * animals.length)];
-                    
-                    const allHabitats = [
-                        { name: 'Océano', icon: '🌊' },
-                        { name: 'Sabana', icon: '' },
-                        { name: 'Cielo', icon: '☁️' },
-                        { name: 'Bosque', icon: '' }
-                    ];
-                    
-                    const wrongHabitats = allHabitats.filter(h => animal.wrong.includes(h.name));
-                    const habitatOpts = [
-                        allHabitats.find(h => h.name === animal.habitat),
-                        wrongHabitats[0],
-                        wrongHabitats[1]
-                    ].sort(() => Math.random() - 0.5);
-                    
-                    return {
-                        type: 'habitats',
-                        instruction: 'Marca las etiquetas correctas.',
-                        question: `¿Dónde vive ${animal.gender} ${animal.name}?`,
-                        animalEmoji: animal.emoji,
-                        animalName: animal.name,
-                        animalGender: animal.gender,
-                        correctAnswer: animal.habitat,
-                        options: habitatOpts
-                    };
-
-                case 'addsub':
-                    const max = diff * 3;
-                    const isAdd = Math.random() > 0.5;
-                    const a = Math.floor(Math.random() * max) + 1;
-                    const b = Math.floor(Math.random() * (isAdd ? max - a : a)) + 1;
-                    const ans = isAdd ? a + b : a - b;
-                    return {
-                        type: 'addsub',
-                        instruction: 'Resuelve la operación.',
-                        question: `${a} ${isAdd ? '+' : '-'} ${b} = ?`,
-                        correctAnswer: ans,
-                        options: generateNumberOptions(ans)
-                    };
-
-                case 'muldiv':
-                    const maxM = Math.min(diff * 2, 12);
-                    if (Math.random() > 0.4) {
-                        const aM = Math.floor(Math.random() * maxM) + 2;
-                        const bM = Math.floor(Math.random() * maxM) + 2;
-                        return {
-                            type: 'muldiv',
-                            instruction: 'Resuelve la multiplicación.',
-                            question: `${aM} × ${bM} = ?`,
-                            correctAnswer: aM * bM,
-                            options: generateNumberOptions(aM * bM)
-                        };
-                    } else {
-                        const ansD = Math.floor(Math.random() * (maxM - 2)) + 2;
-                        const aD = Math.floor(Math.random() * maxM) + 2;
-                        const dividend = aD * ansD;
-                        return {
-                            type: 'muldiv',
-                            instruction: 'Resuelve la división.',
-                            question: `${dividend} ÷ ${aD} = ?`,
-                            correctAnswer: ansD,
-                            options: generateNumberOptions(ansD)
-                        };
-                    }
-
-                default:
-                    return generateExercise('counting', diff);
-            }
-        }
-
-        function generateNumberOptions(correct) {
-            let opts = [correct];
-            while(opts.length < 4) {
-                let wrong = correct + Math.floor(Math.random() * 5) - 2;
-                if(wrong !== correct && wrong > 0 && !opts.includes(wrong)) opts.push(wrong);
-            }
-            return opts.sort(() => Math.random() - 0.5);
         }
 
         function speakQuestion() {
             if (!currentExercise) return;
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentExercise.question);
+                const utterance = new SpeechSynthesisUtterance(currentExercise.q);
                 utterance.lang = 'es-ES';
                 utterance.rate = 0.9;
-                utterance.pitch = 1.1;
-                const voices = window.speechSynthesis.getVoices();
-                const spanishVoice = voices.find(v => v.lang.includes('es'));
-                if (spanishVoice) utterance.voice = spanishVoice;
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.onvoiceschanged = () => {};
+        function finishSession() {
+            clearInterval(timer);
+            document.getElementById('timer-display').classList.remove('active');
+            document.getElementById('streak-display').classList.remove('show');
+            
+            const xpGain = correctCount * 10;
+            stats.xp += xpGain;
+            stats.level = Math.floor(stats.xp / 100) + 1;
+            
+            alert(`¡Sesión completada!\n\nCorrectas: ${correctCount}/10\nXP ganados: ${xpGain}\nNivel: ${stats.level}\n\n¡Excelente trabajo! 🎉`);
+            
+            questionNum = 1;
+            correctCount = 0;
+            streak = 0;
+            showCategories();
+        }
+
+        function showCategories() {
+            clearInterval(timer);
+            document.getElementById('timer-display').classList.remove('active');
+            document.getElementById('exercise-screen').classList.add('hidden');
+            document.getElementById('category-screen').classList.remove('hidden');
         }
 
         function showScreen(id) {
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('world-screen').classList.add('hidden');
+            document.getElementById('category-screen').classList.add('hidden');
             document.getElementById('exercise-screen').classList.add('hidden');
             document.getElementById(id).classList.remove('hidden');
         }
 
-        function renderWorlds() {
-            const container = document.getElementById('worlds-container');
-            container.innerHTML = '';
-            WORLDS.forEach((world, index) => {
-                const isUnlocked = unlockedWorlds.includes(world.id);
-                const bubble = document.createElement('div');
-                bubble.className = `bubble ${!isUnlocked ? 'locked' : ''} ${isUnlocked ? 'float' : ''}`;
-                bubble.style.animationDelay = `${index * 0.2}s`;
-                if (isUnlocked) bubble.style.background = `radial-gradient(circle at 30% 30%, ${world.color}40, ${world.color}10)`;
-                bubble.innerHTML = `
-                    <div class="bubble-icon">${world.icon}</div>
-                    <div class="bubble-label">${world.name}</div>
-                    ${!isUnlocked ? '<div class="lock-overlay">🔒</div>' : ''}
-                `;
-                if (isUnlocked) bubble.onclick = () => startExercise(world.id);
-                container.appendChild(bubble);
-            });
-        }
-
-        function updateWorldUI() {
-            document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
-            document.getElementById('age-badge').textContent = `${AGE_CONFIG[ageGroup].label} (${ageGroup} años)`;
-            document.getElementById('xp-badge').innerHTML = `⭐ ${stats.stars} &nbsp; 🏆 ${stats.xp} XP`;
-            document.getElementById('level-text').textContent = `Nivel ${stats.level}`;
-            document.getElementById('xp-text').textContent = `${stats.xp % 100}/100 XP`;
-            document.getElementById('progress-fill').style.width = `${stats.xp % 100}%`;
-            document.getElementById('character').textContent = AGE_CONFIG[ageGroup].character;
-            renderWorlds();
-        }
-
-        function renderExercise(exercise) {
-            document.getElementById('instruction-text').textContent = exercise.instruction;
-            document.getElementById('question-text').textContent = exercise.question;
-            document.getElementById('question-counter').textContent = `${questionNum} / ${totalQuestions}`;
-
-            const visual = document.getElementById('visual-container');
-            visual.innerHTML = '';
-
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            if (exercise.type === 'counting') {
-                visual.innerHTML = '<div class="objects-container" id="objects-display"></div>';
-                const objDisplay = document.getElementById('objects-display');
-                for (let i = 0; i < exercise.count; i++) {
-                    const obj = document.createElement('div');
-                    obj.className = 'counting-object';
-                    obj.textContent = exercise.item;
-                    obj.style.animationDelay = `${i * 0.1}s`;
-                    objDisplay.appendChild(obj);
-                }
-                exercise.options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.textContent = opt;
-                    btn.onclick = () => handleAnswer(opt, btn);
-                    optionsContainer.appendChild(btn);
-                });
-            }
-
-            else if (exercise.type === 'full-empty') {
-                visual.innerHTML = `
-                    <div style="display:flex;justify-content:center;align-items:flex-end;gap:30px;margin:20px 0;flex-wrap:wrap">
-                        <div class="gumball-machine" id="machine-left" onclick="handleMachineAnswer('left')">
-                            <div class="gumball-globe">
-                                ${exercise.correctAnswer === 'left' ? 
-                                    '<div class="gumballs-filled">' + 
-                                    Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3','#F38181'][i%5]}"></div>`).join('') + 
-                                    '</div>' : 
-                                    '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px;font-weight:700">Vacío</div>'}
-                            </div>
-                            <div class="gumball-base"></div>
-                        </div>
-                        <div class="gumball-machine" id="machine-right" onclick="handleMachineAnswer('right')">
-                            <div class="gumball-globe">
-                                ${exercise.correctAnswer === 'right' ? 
-                                    '<div class="gumballs-filled">' + 
-                                    Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3','#F38181'][i%5]}"></div>`).join('') + 
-                                    '</div>' : 
-                                    '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#ccc;font-size:18px;font-weight:700">Vacío</div>'}
-                            </div>
-                            <div class="gumball-base"></div>
-                        </div>
-                    </div>
-                    <div style="font-size:14px;color:#94a3b8;margin-top:10px;font-weight:600"> Toca la máquina correcta</div>
-                `;
-            }
-
-            else if (exercise.type === 'colors') {
-                // CORREGIDO: Solo muestra la imagen, sin texto revelador
-                visual.innerHTML = `<div style="font-size:100px;margin:20px 0;animation:bounceIn 0.5s ease-out">${exercise.visual}</div>`;
-                
-                exercise.options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerHTML = `<div style="width:32px;height:32px;border-radius:50%;background:${opt.hex};margin-right:12px;flex-shrink:0"></div><span>${opt.name}</span>`;
-                    btn.onclick = () => handleAnswer(opt.name, btn);
-                    optionsContainer.appendChild(btn);
-                });
-            }
-
-            else if (exercise.type === 'habitats') {
-                visual.innerHTML = `
-                    <div style="font-size:100px;margin:20px 0;animation:bounceIn 0.5s ease-out">${exercise.animalEmoji}</div>
-                    <div style="font-size:16px;color:#94a3b8;font-weight:700;margin-bottom:10px;text-transform:capitalize">${exercise.animalGender} ${exercise.animalName}</div>
-                `;
-                
-                exercise.options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.innerHTML = `<span style="font-size:36px;margin-right:12px">${opt.icon}</span><span>${opt.name}</span>`;
-                    btn.onclick = () => handleAnswer(opt.name, btn);
-                    optionsContainer.appendChild(btn);
-                });
-            }
-
-            else if (exercise.type === 'shapes') {
-                visual.innerHTML = `
-                    <div class="shape-container" id="shapes-display">
-                        ${exercise.options.map(opt => `
-                            <div class="shape-option" onclick="handleShapeAnswer('${opt.name}', this)">
-                                ${opt.svg}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            else if (exercise.type === 'addsub' || exercise.type === 'muldiv') {
-                exercise.options.forEach(opt => {
-                    const btn = document.createElement('button');
-                    btn.className = 'option-btn';
-                    btn.textContent = opt;
-                    btn.onclick = () => handleAnswer(opt, btn);
-                    optionsContainer.appendChild(btn);
-                });
-            }
-
-            document.getElementById('feedback-container').innerHTML = '';
-        }
-
-        function handleMachineAnswer(side) {
-            if (currentExercise.type !== 'full-empty') return;
+        // INIT
+        document.getElementById('start-btn').onclick = () => {
+            const name = document.getElementById('name-input').value.trim();
+            const age = parseInt(document.getElementById('age-input').value);
             
-            const isCorrect = side === currentExercise.correctAnswer;
-            const machineEl = document.getElementById(`machine-${side}`);
-            const rect = machineEl.getBoundingClientRect();
+            if (!name || age < 4 || age > 14) {
+                alert('Por favor ingresa tu nombre y edad (4-14 años)');
+                return;
+            }
             
-            if (isCorrect) {
-                machineEl.classList.add('selected');
-                correctCount++;
-                stats.streak++;
-                if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-                playSound('correct');
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
-                updateStreak();
-            } else {
-                machineEl.classList.add('wrong');
-                playSound('wrong');
-                stats.streak = 0;
-                updateStreak();
-                setTimeout(() => {
-                    document.getElementById(`machine-${currentExercise.correctAnswer}`).classList.add('selected');
-                }, 300);
-            }
+            user = { name, age };
+            document.getElementById('user-greeting').textContent = `¡Hola, ${name}! 👋`;
+            showScreen('category-screen');
+        };
 
-            const feedback = document.getElementById('feedback-container');
-            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
-                ${isCorrect ? ' ¡Excelente!' : '💪 ¡La otra está llena!'}
-            </div>`;
-
-            setTimeout(() => {
-                if (questionNum >= totalQuestions) {
-                    completeExercise();
-                } else {
-                    questionNum++;
-                    const config = AGE_CONFIG[ageGroup];
-                    const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
-                    currentExercise = generateExercise(exerciseType, difficulty);
-                    renderExercise(currentExercise);
-                    setTimeout(speakQuestion, 300);
-                }
-            }, 1500);
-        }
-
-        function handleShapeAnswer(shapeName, el) {
-            if (el.classList.contains('selected') || el.classList.contains('wrong')) return;
-            
-            const isCorrect = shapeName === currentExercise.correctAnswer;
-            const rect = el.getBoundingClientRect();
-            
-            if (isCorrect) {
-                el.classList.add('selected');
-                correctCount++;
-                stats.streak++;
-                if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-                playSound('correct');
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
-                createStars(rect.left + rect.width/2, rect.top + rect.height/2);
-                updateStreak();
-            } else {
-                el.classList.add('wrong');
-                playSound('wrong');
-                stats.streak = 0;
-                updateStreak();
-                setTimeout(() => {
-                    const options = document.querySelectorAll('.shape-option');
-                    options.forEach(opt => {
-                        if (opt.getAttribute('onclick').includes(currentExercise.correctAnswer)) {
-                            opt.classList.add('selected');
-                        }
-                    });
-                }, 300);
-            }
-
-            const feedback = document.getElementById('feedback-container');
-            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
-                ${isCorrect ? ' ¡Excelente!' : '💪 ¡Ese no es!'}
-            </div>`;
-
-            setTimeout(() => {
-                if (questionNum >= totalQuestions) {
-                    completeExercise();
-                } else {
-                    questionNum++;
-                    const config = AGE_CONFIG[ageGroup];
-                    const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
-                    currentExercise = generateExercise(exerciseType, difficulty);
-                    renderExercise(currentExercise);
-                    setTimeout(speakQuestion, 300);
-                }
-            }, 1500);
-        }
-
-        function handleAnswer(value, btn) {
-            if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
-
-            const isCorrect = String(value) === String(currentExercise.correctAnswer);
-            btn.classList.add('selected');
-            const rect = btn.getBoundingClientRect();
-
-            if (isCorrect) {
-                correctCount++;
-                stats.streak++;
-                if (stats.streak > stats.bestStreak) stats.bestStreak = stats.streak;
-                playSound('correct');
-                createParticles(rect.left + rect.width/2, rect.top + rect.height/2);
-                createStars(rect.left + rect.width/2, rect.top + rect.height/2);
-                updateStreak();
-            } else {
-                btn.classList.remove('selected');
-                btn.classList.add('wrong');
-                playSound('wrong');
-                stats.streak = 0;
-                updateStreak();
-                setTimeout(() => btn.classList.remove('wrong'), 500);
-            }
-
-            const feedback = document.getElementById('feedback-container');
-            feedback.innerHTML = `<div class="feedback ${isCorrect ? 'correct pop' : 'wrong shake'}">
-                ${isCorrect ? ' ¡Excelente!' : '💪 ¡Sigue intentando!'}
-            </div>`;
-
-            setTimeout(() => {
-                if (questionNum >= totalQuestions) {
-                    completeExercise();
-                } else {
-                    questionNum++;
-                    const config = AGE_CONFIG[ageGroup];
-                    const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
-                    currentExercise = generateExercise(exerciseType, difficulty);
-                    renderExercise(currentExercise);
-                    setTimeout(speakQuestion, 300);
-                }
-            }, 1500);
-        }
-
-        function completeExercise() {
-            const xpGain = correctCount * 10;
-            const starsGain = correctCount >= totalQuestions * 0.8 ? 1 : 0;
-
-            stats.xp += xpGain;
-            stats.stars += starsGain;
-            stats.level = Math.floor(stats.xp / 100) + 1;
-
-            if (correctCount === totalQuestions) {
-                difficulty = Math.min(AGE_CONFIG[ageGroup].maxDifficulty, difficulty + 1);
-            }
-
-            if (correctCount >= totalQuestions * 0.7) {
-                const nextWorld = WORLDS.find(w => !unlockedWorlds.includes(w.id));
-                if (nextWorld) unlockedWorlds.push(nextWorld.id);
-            }
-
-            saveData();
-            questionNum = 1;
-            correctCount = 0;
-            stats.streak = 0;
-            updateStreak();
-            showWorld();
-        }
-
-        function startExercise(worldId) {
-            const config = AGE_CONFIG[ageGroup];
-            const exerciseType = config.exercises[Math.floor(Math.random() * config.exercises.length)];
-            currentExercise = generateExercise(exerciseType, difficulty);
-            questionNum = 1;
-            correctCount = 0;
-            renderExercise(currentExercise);
-            showScreen('exercise-screen');
-            setTimeout(speakQuestion, 500);
-        }
-
-        function showWorld() {
-            updateWorldUI();
-            showScreen('world-screen');
-        }
-
-        function logout() {
-            localStorage.removeItem('mq_smartick_data');
-            user = null;
-            ageGroup = null;
-            stats.streak = 0;
-            updateStreak();
-            showScreen('login-screen');
-        }
-
-        function init() {
-            try {
-                const saved = localStorage.getItem('mq_smartick_data');
-                if (saved) {
-                    const d = JSON.parse(saved);
-                    user = d.user;
-                    ageGroup = d.ageGroup;
-                    stats = d.stats;
-                    unlockedWorlds = d.unlockedWorlds || [];
-                    difficulty = d.difficulty || 1;
-                    showWorld();
-                    return;
-                }
-            } catch(e) {}
-
-            document.getElementById('start-btn').onclick = () => {
-                const name = document.getElementById('name-input').value.trim();
-                const age = parseInt(document.getElementById('age-input').value);
-
-                if (!name || age < 4 || age > 14) {
-                    alert('Por favor ingresa tu nombre y edad (4-14 años)');
-                    return;
-                }
-
-                let group = age <= 5 ? '4-5' : age <= 7 ? '6-7' : age <= 9 ? '8-9' : age <= 12 ? '10-12' : '13-14';
-
-                user = { name, age, group };
-                ageGroup = group;
-                unlockedWorlds = AGE_CONFIG[group].worlds.slice(0, 2);
-                stats = { xp: 0, stars: 0, level: 1, completedWorlds: [], streak: 0, bestStreak: 0 };
-                difficulty = 1;
-
-                saveData();
-                showWorld();
-            };
-        }
-
-        function saveData() {
-            localStorage.setItem('mq_smartick_data', JSON.stringify({
-                user, ageGroup, stats, unlockedWorlds, difficulty
-            }));
-        }
-
-        window.onload = init;
+        window.onload = () => {
+            // Initialize
+        };
     </script>
 </body>
 </html>
