@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathQuest - Aprende Jugando</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #98D8C8 100%);
+            min-height: 100vh;
+        }
+
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        @keyframes pop { 0%{transform:scale(0.8);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+        .float { animation: float 3s ease-in-out infinite; }
+        .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .shake { animation: shake 0.5s ease-in-out; }
+
+        .bubble {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.4));
+            border: 4px solid rgba(255,255,255,0.8);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .bubble:hover:not(.locked) {
+            transform: translateY(-8px) scale(1.05);
+        }
+
+        .bubble.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+            filter: grayscale(0.5);
+        }
+
+        .bubble-icon { font-size: 60px; margin-bottom: 8px; }
+        .bubble-label { font-weight: 800; font-size: 14px; color: #2C3E50; text-align: center; }
+
+        .lock-overlay {
+            position: absolute;
+            font-size: 48px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border-radius: 14px;
+            border: none;
+            font-family: 'Nunito';
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn:active { transform: scale(0.95); }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+        }
+
+        .option-btn {
+            background: white;
+            border: 4px solid #E0E0E0;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 10px 0;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 18px;
+            font-family: 'Nunito';
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover { border-color: #3498DB; transform: translateX(8px); }
+        .option-btn.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.05); }
+        .option-btn.wrong { border-color: #E74C3C; background: #FDEDEC; animation: shake 0.5s; }
+
+        .objects-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            padding: 30px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            margin: 20px 0;
+            min-height: 120px;
+            align-items: center;
+        }
+
+        .counting-object {
+            font-size: 48px;
+            animation: pop 0.5s ease-out;
+        }
+
+        .gumball-machine {
+            width: 150px;
+            height: 220px;
+            position: relative;
+            display: inline-block;
+            margin: 0 20px;
+        }
+
+        .gumball-globe {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(0,0,0,0.2);
+            overflow: hidden;
+            background: rgba(255,255,255,0.3);
+            position: relative;
+        }
+
+        .gumballs-filled {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+            padding: 8px;
+        }
+
+        .gumball {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #FF6B6B;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+            border: 3px solid white;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #2ECC71, #27AE60);
+            height: 100%;
+            transition: width 0.8s;
+            border-radius: 17px;
+        }
+
+        .hidden { display: none !important; }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
+        <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 450px; width: 100%; text-align: center;">
+            <div class="float" style="font-size: 80px; margin-bottom: 16px;">🎓</div>
+            <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 8px; color: #2C3E50;">MathQuest</h1>
+            <p style="color: #7F8C8D; margin-bottom: 32px; font-size: 16px;">Aprende jugando como en Smartick</p>
+
+            <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
+
+            <input id="age-input" type="number" placeholder="Tu edad (4-14)" min="4" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 24px;">
+
+            <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar Aventura!</button>
+        </div>
+    </div>
+
+    <!-- WORLD MAP SCREEN -->
+    <div id="world-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(180deg, #FFB347 0%, #FFCC99 40%, #DEB887 100%); padding-bottom: 100px;">
+        <header style="background: rgba(255,255,255,0.9); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <div>
+                <h1 id="user-greeting" style="font-size: 24px; font-weight: 900; color: #2C3E50;"></h1>
+                <span id="age-badge" style="background: #3498DB; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;"></span>
+            </div>
+            <div style="display: flex; gap: 16px; align-items: center;">
+                <div id="xp-badge" style="background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 20px; padding: 8px 16px; font-weight: 800;"></div>
+                <button onclick="logout()" style="background: #E74C3C; color: white; border: none; border-radius: 12px; padding: 8px 16px; cursor: pointer; font-weight: 700; font-family: 'Nunito';">🚪</button>
+            </div>
+        </header>
+
+        <div style="max-width: 600px; margin: 24px auto; padding: 0 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 700; color: #2C3E50;">
+                <span id="level-text"></span>
+                <span id="xp-text"></span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <div style="max-width: 900px; margin: 40px auto; display: flex; flex-direction: column; align-items: center; gap: 32px; padding: 0 20px;">
+            <h2 style="font-size: 28px; font-weight: 900; color: #2C3E50;"> Mundos de Aprendizaje</h2>
+
+            <div id="worlds-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;"></div>
+        </div>
+
+        <div id="character" class="float" style="position: fixed; bottom: 20px; right: 20px; font-size: 80px; cursor: pointer;"></div>
+
+        <div class="pulse" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #FFD700, #FFA500); padding: 16px 32px; border-radius: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); cursor: pointer; font-weight: 800; font-size: 16px; color: #2C3E50;">
+            🎯 Reto Diario: Completa 3 ejercicios
+        </div>
+    </div>
+
+    <!-- EXERCISE SCREEN -->
+    <div id="exercise-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(180deg, #E0F6FF 0%, #98D8C8 100%); padding: 20px;">
+        <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <button onclick="showWorld()" class="btn" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">← Volver</button>
+            <div style="background: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 18px;" id="question-counter">1 / 10</div>
+        </div>
+
+        <div class="card pop" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <div style="font-size: 18px; color: #7F8C8D; margin-bottom: 8px;" id="instruction-text"></div>
+            <h2 id="question-text" style="font-size: 32px; font-weight: 900; color: #2C3E50; margin-bottom: 24px;"></h2>
+            <div id="visual-container"></div>
+            <div id="options-container" style="max-width: 500px; margin: 20px auto 0;"></div>
+            <div id="feedback-container" style="margin-top: 24px;"></div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURACIÓN POR EDADES
+        // ==========================================
+        const AGE_CONFIG = {
+            '4-5': {
+                label: 'Preescolar',
+                worlds: ['numeros', 'colores', 'formas'],
+                lockedWorlds: ['sumas', 'restas'],
+                exercises: ['counting', 'colors', 'full-empty', 'habitats'],
+                maxDifficulty: 3,
+                character: '🐻'
+            },
+            '6-7': {
+                label: 'Básico',
+                worlds: ['numeros', 'colores', 'formas', 'sumas', 'restas'],
+                lockedWorlds: ['multiplicacion'],
+                exercises: ['addsub', 'compare', 'full-empty', 'habitats'],
+                maxDifficulty: 5,
+                character: '🦊'
+            },
+            '8-9': {
+                label: 'Intermedio',
+                worlds: ['numeros', 'sumas', 'restas', 'multiplicacion', 'division_basica'],
+                lockedWorlds: ['fracciones'],
+                exercises: ['muldiv', 'problems', 'logic'],
+                maxDifficulty: 7,
+                character: '🦁'
+            },
+            '10-12': {
+                label: 'Avanzado',
+                worlds: ['fracciones', 'geometria', 'logica', 'problemas'],
+                lockedWorlds: ['algebra'],
+                exercises: ['fractions', 'geometry', 'algebra'],
+                maxDifficulty: 10,
+                character: '🦅'
+            },
+            '13-14': {
+                label: 'Experto',
+                worlds: ['algebra', 'razonamiento', 'estadistica', 'desafios'],
+                lockedWorlds: [],
+                exercises: ['algebra', 'reasoning', 'advanced'],
+                maxDifficulty: 12,
+                character: ''
+            }
+        };
+
+        const WORLDS = [
+            { id: 'numeros', name: 'Números', icon: '', color: '#FF6B6B' },
+            { id: 'colores', name: 'Colores', icon: '🎨', color: '#4ECDC4' },
+            { id: 'formas', name: 'Formas', icon: '🔷', color: '#FFE66D' },
+            { id: 'sumas', name: 'Sumas', icon: '➕', color: '#95E1D3' },
+            { id: 'restas', name: 'Restas', icon: '➖', color: '#F38181' },
+            { id: 'multiplicacion', name: 'Multiplicar', icon: '✖️', color: '#AA96DA' }
+        ];
+
+        // ==========================================
+        // ESTADO DE LA APP
+        // ==========================================
+        let user = null;
+        let ageGroup = null;
+        let stats = { xp: 0, stars: 0, level: 1, completedWorlds: [] };
+        let unlockedWorlds = [];
+        let currentExercise = null;
+        let difficulty = 1;
+        let questionNum = 1;
+        let correctCount = 0;
+        const totalQuestions = 10;
+
+        // ==========================================
+        // GENERADORES DE EJERCICIOS
+        // ==========================================
+        function generateExercise(type, diff) {
+            switch(type) {
+                case 'counting':
+                    const count = Math.floor(Math.random() * Math.max(2, diff * 3)) + 1;
+                    const items = ['🍎', '', '🎈', '', '', ''];
+                    const item = items[Math.floor(Math.random() * items.length)];
+                    return {
+                        type: 'counting',
+                        instruction: 'Cuenta los objetos.',
+                        question: '¿Cuántos hay?',
+                        count: count,
+                        item: item,
+                        correctAnswer: count,
+                        options: [count-1, count, count+1, count+2].filter(x => x > 0).sort(() => Math.random() - 0.5)
+                    };
+
+                case 'colors':
+                    const colors = [
+                        { name: 'Verde', hex: '#2ECC71' },
+                        { name: 'Rojo', hex: '#E74C3C' },
+                        { name: 'Azul', hex: '#3498DB' },
+                        { name: 'Amarillo', hex: '#F1C40F' }
+                    ];
+                    const target = colors[Math.floor(Math.random() * colors.length)];
+                    const fruitItems = ['🍎', '', '🍊', '🫐'];
+                    const fruit = fruitItems[Math.floor(Math.random() * fruitItems.length)];
+                    return {
+                        type: 'colors',
+                        instruction: 'Marca las etiquetas correctas.',
+                        question: `¿De qué color es esta ${fruit}?`,
+                        correctAnswer: target.name,
+                        options: colors
+                    };
+
+                case 'full-empty':
+                    const fullSide = Math.random() > 0.5 ? 'left' : 'right';
+                    return {
+                        type: 'full-empty',
+                        instruction: 'Responde la pregunta.',
+                        question: '¿Cuál está llena?',
+                        correctAnswer: fullSide,
+                        options: [
+                            { label: 'Izquierda', value: 'left' },
+                            { label: 'Derecha', value: 'right' }
+                        ]
+                    };
+
+                case 'habitats':
+                    const animals = [
+                        { name: 'elefante', icon: '🐘', habitat: 'Sabana', wrong: ['Océano', 'Cielo'] },
+                        { name: 'tiburón', icon: '🦈', habitat: 'Océano', wrong: ['Sabana', 'Cielo'] },
+                        { name: 'águila', icon: '🦅', habitat: 'Cielo', wrong: ['Océano', 'Sabana'] },
+                        { name: 'oso', icon: '🐻', habitat: 'Bosque', wrong: ['Océano', 'Cielo'] }
+                    ];
+                    const animal = animals[Math.floor(Math.random() * animals.length)];
+                    const habitats = [
+                        { name: 'Océano', icon: '🌊' },
+                        { name: 'Sabana', icon: '🌍' },
+                        { name: 'Cielo', icon: '☁️' },
+                        { name: 'Bosque', icon: '🌲' }
+                    ];
+                    const habitatOpts = [
+                        habitats.find(h => h.name === animal.habitat),
+                        ...habitats.filter(h => animal.wrong.includes(h.name)).slice(0, 2)
+                    ].sort(() => Math.random() - 0.5);
+                    return {
+                        type: 'habitats',
+                        instruction: 'Marca las etiquetas correctas.',
+                        question: `¿Dónde vive el/la ${animal.name}?`,
+                        correctAnswer: animal.habitat,
+                        options: habitatOpts
+                    };
+
+                case 'addsub':
+                    const max = diff * 3;
+                    const isAdd = Math.random() > 0.5;
+                    const a = Math.floor(Math.random() * max) + 1;
+                    const b = Math.floor(Math.random() * (isAdd ? max - a : a)) + 1;
+                    const ans = isAdd ? a + b : a - b;
+                    return {
+                        type: 'addsub',
+                        instruction: 'Resuelve la operación.',
+                        question: `${a} ${isAdd ? '+' : '-'} ${b} = ?`,
+                        correctAnswer: ans,
+                        options: [ans, ans+1, ans-1, ans+2].filter(x => x >= 0).sort(() => Math.random() - 0.5)
+                    };
+
+                case 'muldiv':
+                    const maxM = Math.min(diff * 2, 12);
+                    if (Math.random() > 0.4) {
+                        const aM = Math.floor(Math.random() * maxM) + 2;
+                        const bM = Math.floor(Math.random() * maxM) + 2;
+                        return {
+                            type: 'muldiv',
+                            instruction: 'Resuelve la multiplicación.',
+                            question: `${aM} × ${bM} = ?`,
+                            correctAnswer: aM * bM,
+                            options: [aM*bM, aM*bM-1, aM*bM+2, aM*bM-3].filter(x => x > 0).sort(() => Math.random() - 0.5)
+                        };
+                    } else {
+                        const ansD = Math.floor(Math.random() * (maxM - 2)) + 2;
+                        const aD = Math.floor(Math.random() * maxM) + 2;
+                        const dividend = aD * ansD;
+                        return {
+                            type: 'muldiv',
+                            instruction: 'Resuelve la división.',
+                            question: `${dividend} ÷ ${aD} = ?`,
+                            correctAnswer: ansD,
+                            options: [ansD, ansD-1, ansD+2, ansD+1].filter(x => x > 0).sort(() => Math.random() - 0.5)
+                        };
+                    }
+
+                default:
+                    return generateExercise('counting', diff);
+            }
+        }
+
+        // ==========================================
+        // FUNCIONES DE UI
+        // ==========================================
+        function showScreen(id) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('world-screen').classList.add('hidden');
+            document.getElementById('exercise-screen').classList.add('hidden');
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function renderWorlds() {
+            const container = document.getElementById('worlds-container');
+            container.innerHTML = '';
+            WORLDS.forEach((world, index) => {
+                const isUnlocked = unlockedWorlds.includes(world.id);
+                const bubble = document.createElement('div');
+                bubble.className = `bubble ${!isUnlocked ? 'locked' : ''} ${isUnlocked ? 'float' : ''}`;
+                bubble.style.animationDelay = `${index * 0.2}s`;
+                if (isUnlocked) {
+                    bubble.style.background = `radial-gradient(circle at 30% 30%, ${world.color}40, ${world.color}10)`;
+                }
+                bubble.innerHTML = `
+                    <div class="bubble-icon">${world.icon}</div>
+                    <div class="bubble-label">${world.name}</div>
+                    ${!isUnlocked ? '<div class="lock-overlay">🔒</div>' : ''}
+                `;
+                if (isUnlocked) {
+                    bubble.onclick = () => startExercise(world.id);
+                }
+                container.appendChild(bubble);
+            });
+        }
+
+        function updateWorldUI() {
+            document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
+            document.getElementById('age-badge').textContent = `${AGE_CONFIG[ageGroup].label} (${ageGroup} años)`;
+            document.getElementById('xp-badge').innerHTML = `⭐ ${stats.stars} &nbsp; 🏆 ${stats.xp} XP`;
+            document.getElementById('level-text').textContent = `Nivel ${stats.level}`;
+            document.getElementById('xp-text').textContent = `${stats.xp % 100}/100 XP`;
+            document.getElementById('progress-fill').style.width = `${stats.xp % 100}%`;
+            document.getElementById('character').textContent = AGE_CONFIG[ageGroup].character;
+            renderWorlds();
+        }
+
+        function renderExercise(exercise) {
+            document.getElementById('instruction-text').textContent = exercise.instruction;
+            document.getElementById('question-text').textContent = exercise.question;
+            document.getElementById('question-counter').textContent = `${questionNum} / ${totalQuestions}`;
+
+            // Render visual
+            const visual = document.getElementById('visual-container');
+            visual.innerHTML = '';
+
+            if (exercise.type === 'counting') {
+                visual.innerHTML = '<div class="objects-container" id="objects-display"></div>';
+                const objDisplay = document.getElementById('objects-display');
+                for (let i = 0; i < exercise.count; i++) {
+                    const obj = document.createElement('div');
+                    obj.className = 'counting-object';
+                    obj.textContent = exercise.item;
+                    obj.style.animationDelay = `${i * 0.1}s`;
+                    objDisplay.appendChild(obj);
+                }
+            } else if (exercise.type === 'full-empty') {
+                visual.innerHTML = `
+                    <div style="display:flex;justify-content:center;gap:40px;margin:20px 0">
+                        <div class="gumball-machine">
+                            <div class="gumball-globe">
+                                ${exercise.correctAnswer === 'left' ? '<div class="gumballs-filled">' + Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3'][i%4]}"></div>`).join('') + '</div>' : ''}
+                            </div>
+                            <div style="width:80px;height:100px;background:linear-gradient(180deg,#E74C3C,#C0392B);margin:0 auto;border-radius:0 0 20px 20px"></div>
+                        </div>
+                        <div class="gumball-machine">
+                            <div class="gumball-globe">
+                                ${exercise.correctAnswer === 'right' ? '<div class="gumballs-filled">' + Array(25).fill(0).map((_, i) => `<div class="gumball" style="background:${['#FF6B6B','#4ECDC4','#FFE66D','#95E1D3'][i%4]}"></div>`).join('') + '</div>' : ''}
+                            </div>
+                            <div style="width:80px;height:100px;background:linear-gradient(180deg,#E74C3C,#C0392B);margin:0 auto;border-radius:0 0 20px 20px"></div>
+                        </div>
+                    </div>
+                `;
+            } else if (exercise.type === 'colors') {
+                const fruitItems = ['🍎', '', '🍊', ''];
+                const fruit = fruitItems[Math.floor(Math.random() * fruitItems.length)];
+                visual.innerHTML = `<div style="font-size:80px;margin:20px 0">${fruit}</div>`;
+            } else if (exercise.type === 'habitats') {
+                const animalMatch = exercise.options.find(h => h.icon);
+                const animalIcon = exercise.options.find(h => ['🐘','🦈','','🐻'].includes(h.icon))?.icon || '🐘';
+                visual.innerHTML = `<div style="font-size:100px;margin:20px 0">${animalIcon}</div>`;
+            }
+
+            // Render options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            exercise.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+
+                if (exercise.type === 'colors') {
+                    btn.innerHTML = `<div style="width:32px;height:32px;border-radius:50%;background:${opt.hex};margin-right:12px"></div>${opt.name}`;
+                    btn.onclick = () => handleAnswer(opt.name, btn);
+                } else if (exercise.type === 'habitats') {
+                    btn.innerHTML = `<span style="font-size:32px;margin-right:12px">${opt.icon}</span>${opt.name}`;
+                    btn.onclick = () => handleAnswer(opt.name, btn);
+                } else if (exercise.type === 'full-empty') {
+                    btn.textContent = opt.label;
+                    btn.onclick = () => handleAnswer(opt.value, btn);
+                } else {
+                    btn.textContent = opt;
+                    btn.onclick = () => handleAnswer(opt, btn);
+                }
+
+                optionsContainer.appendChild(btn);
+            });
+
+            document.getElementById('feedback-container').innerHTML = '';
+        }
+
+        let selectedButton = null;
+
+        function handleAnswer(value, btn) {
+            if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
+
+            const isCorrect = String(value) === String(currentExercise.correctAnswer);
+            btn.classList.add('selected');
+
+            if (!isCorrect) {
+                btn.classList.remove('selected');
+                btn.classList.add('wrong');
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+
+            if (isCorrect) correctCount++;
+
+            const feedback = document.getElementById('feedback-container');
+            feedback.innerHTML = `<div class="${isCorrect ? 'pop' : 'shake'}" style="padding:16px 32px;border-radius:16px;background:${isCorrect ? '#2ECC71' : '#E74C3C'};color:white;font-size:24px;font-weight:800;display:inline-block;margin-top:20px">
+                ${isCorrect ? ' ¡Excelente!' : '💪 ¡Sigue intentando!'}
+            </div>`;
+
+            setTimeout(() => {
+                if (questionNum >= totalQuestions) {
+                    completeExercise();
+                } else {
+                    questionNum++;
+                    currentExercise = generateExercise(AGE_CONFIG[ageGroup].exercises[Math.floor(Math.random() * AGE_CONFIG[ageGroup].exercises.length)], difficulty);
+                    renderExercise(currentExercise);
+                }
+            }, 1500);
+        }
+
+        function completeExercise() {
+            const xpGain = correctCount * 10;
+            const starsGain = correctCount >= totalQuestions * 0.8 ? 1 : 0;
+
+            stats.xp += xpGain;
+            stats.stars += starsGain;
+            stats.level = Math.floor(stats.xp / 100) + 1;
+
+            if (correctCount === totalQuestions) {
+                difficulty = Math.min(AGE_CONFIG[ageGroup].maxDifficulty, difficulty + 1);
+            }
+
+            // Desbloquear siguiente mundo si aplica
+            if (correctCount >= totalQuestions * 0.7) {
+                const nextWorld = WORLDS.find(w => !unlockedWorlds.includes(w.id));
+                if (nextWorld) {
+                    unlockedWorlds.push(nextWorld.id);
+                }
+            }
+
+            saveData();
+            questionNum = 1;
+            correctCount = 0;
+            showWorld();
+        }
+
+        function startExercise(worldId) {
+            const exerciseType = AGE_CONFIG[ageGroup].exercises[Math.floor(Math.random() * AGE_CONFIG[ageGroup].exercises.length)];
+            currentExercise = generateExercise(exerciseType, difficulty);
+            questionNum = 1;
+            correctCount = 0;
+            renderExercise(currentExercise);
+            showScreen('exercise-screen');
+        }
+
+        function showWorld() {
+            updateWorldUI();
+            showScreen('world-screen');
+        }
+
+        function logout() {
+            localStorage.removeItem('mq_smartick_data');
+            user = null;
+            ageGroup = null;
+            showScreen('login-screen');
+        }
+
+        // ==========================================
+        // INICIALIZACIÓN
+        // ==========================================
+        function init() {
+            // Cargar datos guardados
+            try {
+                const saved = localStorage.getItem('mq_smartick_data');
+                if (saved) {
+                    const d = JSON.parse(saved);
+                    user = d.user;
+                    ageGroup = d.ageGroup;
+                    stats = d.stats;
+                    unlockedWorlds = d.unlockedWorlds || [];
+                    difficulty = d.difficulty || 1;
+                    showWorld();
+                    return;
+                }
+            } catch(e) {}
+
+            // Botón de inicio
+            document.getElementById('start-btn').onclick = () => {
+                const name = document.getElementById('name-input').value.trim();
+                const age = parseInt(document.getElementById('age-input').value);
+
+                if (!name || age < 4 || age > 14) {
+                    alert('Por favor ingresa tu nombre y edad (4-14 años)');
+                    return;
+                }
+
+                let group = age <= 5 ? '4-5' : age <= 7 ? '6-7' : age <= 9 ? '8-9' : age <= 12 ? '10-12' : '13-14';
+
+                user = { name, age, group };
+                ageGroup = group;
+                unlockedWorlds = AGE_CONFIG[group].worlds.slice(0, 2);
+                stats = { xp: 0, stars: 0, level: 1, completedWorlds: [] };
+                difficulty = 1;
+
+                saveData();
+                showWorld();
+            };
+        }
+
+        function saveData() {
+            localStorage.setItem('mq_smartick_data', JSON.stringify({
+                user, ageGroup, stats, unlockedWorlds, difficulty
+            }));
+        }
+
+        // Iniciar app cuando cargue la página
+        window.onload = init;
+    </script>
+</body>
+</html>
