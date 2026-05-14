@@ -205,7 +205,6 @@
             font-weight: 900;
         }
 
-        /* PANTALLA DE BLOQUEO */
         .blocked-screen {
             min-height: 100vh;
             display: flex;
@@ -290,7 +289,7 @@
     <!-- TIMER -->
     <div id="timer-display" class="timer-display">
         <span>⏱️</span>
-        <span id="timer-text">30:00</span>
+        <span id="timer-text">20:00</span>
     </div>
 
     <!-- STREAK -->
@@ -305,7 +304,7 @@
             <div class="blocked-icon">⏰</div>
             <h1 class="blocked-title">¡Tiempo completado!</h1>
             <p class="blocked-message">
-                Has usado tus <strong>30 minutos</strong> de hoy.<br>
+                Has usado tus <strong>20 minutos</strong> de hoy.<br>
                 Tu cerebro necesita descansar para aprender mejor. 🧠
             </p>
             
@@ -361,7 +360,7 @@
                 <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
                 <div id="grade-info" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 16px; font-weight: 700; margin-bottom: 16px;"></div>
                 <div id="daily-time-info" style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700;">
-                    ⏱️ 30 minutos al día - Tu progreso se guarda automáticamente
+                    ⏱️ 20 minutos al día - Tu progreso se guarda automáticamente
                 </div>
             </div>
 
@@ -443,129 +442,174 @@
             'rana': { emoji: '🐸', sound: 'croar', name: 'rana' }
         };
 
-        // BANCO DE PREGUNTAS POR EDAD Y CATEGORÍA
+        // BANCO DE PREGUNTAS MEJORADO - SIN REPETICIÓN Y BIEN REDACTADAS
         const QUESTION_BANK = {
             matematicas: {
                 inicial: [
-                    { q: '¿Cuántos hay?', visual: '🍎🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
-                    { q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
-                    { q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
-                    { q: '¿Qué color es?', visual: '<span style="display:inline-block;width:40px;height:40px;background:#E74C3C;border-radius:50%"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
-                    { q: '¿Cuál es más grande?', visual: '🐘 🐜', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
-                    { q: 'Cuenta: 1, 2, 3, ?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] },
-                    { q: '¿Cuántos hay?', visual: '⭐⭐', type: 'count', ans: 2, opts: [1, 2, 3] },
-                    { q: '¿Cuántos hay?', visual: '🎈🎈🎈', type: 'count', ans: 4, opts: [3, 4, 5] }
+                    { id: 'm_ini_1', q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { id: 'm_ini_2', q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { id: 'm_ini_3', q: '¿Qué figura es?', visual: '⭕', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { id: 'm_ini_4', q: '¿Qué color es?', visual: '<span style="display:inline-block;width:40px;height:40px;background:#E74C3C;border-radius:50%"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
+                    { id: 'm_ini_5', q: '¿Cuál es más grande?', visual: '🐘 ', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
+                    { id: 'm_ini_6', q: 'Cuenta: 1, 2, 3, ¿qué sigue?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] },
+                    { id: 'm_ini_7', q: '¿Cuántos hay?', visual: '⭐⭐', type: 'count', ans: 2, opts: [1, 2, 3] },
+                    { id: 'm_ini_8', q: '¿Cuántos hay?', visual: '🎈🎈🎈', type: 'count', ans: 4, opts: [3, 4, 5] },
+                    { id: 'm_ini_9', q: '¿Cuántos hay?', visual: '', type: 'count', ans: 1, opts: [1, 2, 3] },
+                    { id: 'm_ini_10', q: '¿Cuántos hay?', visual: '🍌🍌🍌🍌', type: 'count', ans: 5, opts: [4, 5, 6] }
                 ],
                 primaria_baja: [
-                    { q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
-                    { q: '9 - 4 = ?', visual: '', type: 'sub', ans: 5, opts: [4, 5, 6, 7] },
-                    { q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
-                    { q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
-                    { q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] },
-                    { q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] }
+                    { id: 'm_pb_1', q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
+                    { id: 'm_pb_2', q: '9 - 4 = ?', visual: '', type: 'sub', ans: 5, opts: [4, 5, 6, 7] },
+                    { id: 'm_pb_3', q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
+                    { id: 'm_pb_4', q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
+                    { id: 'm_pb_5', q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] },
+                    { id: 'm_pb_6', q: '7 + 6 = ?', visual: '', type: 'add', ans: 13, opts: [12, 13, 14, 15] },
+                    { id: 'm_pb_7', q: '10 - 3 = ?', visual: '', type: 'sub', ans: 7, opts: [6, 7, 8, 9] },
+                    { id: 'm_pb_8', q: '¿Cuántos lados tiene un triángulo?', visual: '', type: 'geometry', ans: 3, opts: [2, 3, 4, 5] }
                 ],
                 primaria_media: [
-                    { q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
-                    { q: '24 ÷ 4 = ?', visual: '', type: 'div', ans: 6, opts: [5, 6, 7, 8] },
-                    { q: '¿Cuántos minutos tiene una hora?', visual: '⏰', type: 'time', ans: 60, opts: [30, 45, 60, 90] },
-                    { q: '15 + 27 = ?', visual: '', type: 'add', ans: 42, opts: [40, 42, 44, 45] },
-                    { q: '¿Qué fracción es mayor?', visual: '½ vs ¼', type: 'fraction', ans: '½', opts: ['½', '¼', 'son iguales'] }
+                    { id: 'm_pm_1', q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
+                    { id: 'm_pm_2', q: '24 ÷ 4 = ?', visual: '', type: 'div', ans: 6, opts: [5, 6, 7, 8] },
+                    { id: 'm_pm_3', q: '¿Cuántos minutos tiene una hora?', visual: '⏰', type: 'time', ans: 60, opts: [30, 45, 60, 90] },
+                    { id: 'm_pm_4', q: '15 + 27 = ?', visual: '', type: 'add', ans: 42, opts: [40, 42, 44, 45] },
+                    { id: 'm_pm_5', q: '¿Qué fracción es mayor?', visual: '½ vs ¼', type: 'fraction', ans: '½', opts: ['½', '¼', 'son iguales'] },
+                    { id: 'm_pm_6', q: '8 × 4 = ?', visual: '', type: 'mul', ans: 32, opts: [28, 32, 36, 40] },
+                    { id: 'm_pm_7', q: '36 ÷ 6 = ?', visual: '', type: 'div', ans: 6, opts: [5, 6, 7, 8] }
                 ],
                 primaria_alta: [
-                    { q: '12 × 8 = ?', visual: '', type: 'mul', ans: 96, opts: [86, 96, 106, 88] },
-                    { q: '144 ÷ 12 = ?', visual: '', type: 'div', ans: 12, opts: [10, 11, 12, 13] },
-                    { q: '¿Cuántos grados tiene un ángulo recto?', visual: '∟', type: 'geometry', ans: 90, opts: [45, 90, 180, 360] },
-                    { q: '3/4 + 1/4 = ?', visual: '', type: 'fraction', ans: 1, opts: ['1/2', '1', '3/4', '2'] },
-                    { q: 'El perímetro de un cuadrado de lado 5 cm es:', visual: '', type: 'geometry', ans: 20, opts: [15, 20, 25, 30] }
+                    { id: 'm_pa_1', q: '12 × 8 = ?', visual: '', type: 'mul', ans: 96, opts: [86, 96, 106, 88] },
+                    { id: 'm_pa_2', q: '144 ÷ 12 = ?', visual: '', type: 'div', ans: 12, opts: [10, 11, 12, 13] },
+                    { id: 'm_pa_3', q: '¿Cuántos grados tiene un ángulo recto?', visual: '∟', type: 'geometry', ans: 90, opts: [45, 90, 180, 360] },
+                    { id: 'm_pa_4', q: '3/4 + 1/4 = ?', visual: '', type: 'fraction', ans: 1, opts: ['1/2', '1', '3/4', '2'] },
+                    { id: 'm_pa_5', q: 'El perímetro de un cuadrado de lado 5 cm es:', visual: '', type: 'geometry', ans: 20, opts: [15, 20, 25, 30] },
+                    { id: 'm_pa_6', q: '15 × 6 = ?', visual: '', type: 'mul', ans: 90, opts: [80, 90, 100, 85] },
+                    { id: 'm_pa_7', q: '100 ÷ 25 = ?', visual: '', type: 'div', ans: 4, opts: [3, 4, 5, 6] }
                 ],
                 secundaria: [
-                    { q: '2x + 5 = 13. ¿Cuánto vale x?', visual: '', type: 'algebra', ans: 4, opts: [3, 4, 5, 6] },
-                    { q: '√81 = ?', visual: '', type: 'algebra', ans: 9, opts: [8, 9, 10, 11] },
-                    { q: '(-3) × (-4) = ?', visual: '', type: 'algebra', ans: 12, opts: [-12, 12, -7, 7] },
-                    { q: '¿Cuánto es el 25% de 200?', visual: '', type: 'percent', ans: 50, opts: [25, 50, 75, 100] },
-                    { q: 'Si a=3 y b=5, ¿cuánto es a² + b?', visual: '', type: 'algebra', ans: 14, opts: [11, 14, 16, 19] }
+                    { id: 'm_sec_1', q: '2x + 5 = 13. ¿Cuánto vale x?', visual: '', type: 'algebra', ans: 4, opts: [3, 4, 5, 6] },
+                    { id: 'm_sec_2', q: '√81 = ?', visual: '', type: 'algebra', ans: 9, opts: [8, 9, 10, 11] },
+                    { id: 'm_sec_3', q: '(-3) × (-4) = ?', visual: '', type: 'algebra', ans: 12, opts: [-12, 12, -7, 7] },
+                    { id: 'm_sec_4', q: '¿Cuánto es el 25% de 200?', visual: '', type: 'percent', ans: 50, opts: [25, 50, 75, 100] },
+                    { id: 'm_sec_5', q: 'Si a=3 y b=5, ¿cuánto es a² + b?', visual: '', type: 'algebra', ans: 14, opts: [11, 14, 16, 19] },
+                    { id: 'm_sec_6', q: '3x - 7 = 11. ¿Cuánto vale x?', visual: '', type: 'algebra', ans: 6, opts: [5, 6, 7, 8] },
+                    { id: 'm_sec_7', q: '¿Cuánto es el 10% de 150?', visual: '', type: 'percent', ans: 15, opts: [10, 15, 20, 25] }
                 ]
             },
             lectura: {
                 inicial: [
-                    { q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
-                    { q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
-                    { q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] },
-                    { q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'] },
-                    { q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'] },
-                    { q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'] }
+                    { id: 'l_ini_1', q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
+                    { id: 'l_ini_2', q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
+                    { id: 'l_ini_3', q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] },
+                    { id: 'l_ini_4', q: '¿Qué animal hace este sonido?', visual: '🦁', type: 'animal_sound', ans: 'leon', opts: ['leon', 'gato', 'perro'] },
+                    { id: 'l_ini_5', q: '¿Qué animal hace este sonido?', visual: '🐱', type: 'animal_sound', ans: 'gato', opts: ['gato', 'perro', 'vaca'] },
+                    { id: 'l_ini_6', q: '¿Qué animal hace este sonido?', visual: '🐶', type: 'animal_sound', ans: 'perro', opts: ['gato', 'perro', 'pollo'] },
+                    { id: 'l_ini_7', q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'] },
+                    { id: 'l_ini_8', q: '¿Qué animal hace este sonido?', visual: '🐔', type: 'animal_sound', ans: 'pollo', opts: ['pato', 'pollo', 'gallo'] },
+                    { id: 'l_ini_9', q: '¿Cuántas sílabas tiene "sol"?', visual: '', type: 'syllable', ans: 1, opts: [1, 2, 3] },
+                    { id: 'l_ini_10', q: '¿Cuántas sílabas tiene "pelota"?', visual: '', type: 'syllable', ans: 3, opts: [2, 3, 4] }
                 ],
                 primaria_baja: [
-                    { q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
-                    { q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
-                    { q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
-                    { q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] },
-                    { q: '¿Qué animal hace este sonido?', visual: '🐮', type: 'animal_sound', ans: 'vaca', opts: ['vaca', 'oveja', 'caballo'] }
+                    { id: 'l_pb_1', q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
+                    { id: 'l_pb_2', q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
+                    { id: 'l_pb_3', q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
+                    { id: 'l_pb_4', q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] },
+                    { id: 'l_pb_5', q: '¿Qué animal hace este sonido?', visual: '🐑', type: 'animal_sound', ans: 'oveja', opts: ['vaca', 'oveja', 'caballo'] },
+                    { id: 'l_pb_6', q: '¿Cuál es un verbo?', visual: '', type: 'grammar', ans: 'correr', opts: ['casa', 'correr', 'grande'] },
+                    { id: 'l_pb_7', q: 'Sinónimo de "rápido":', visual: '', type: 'synonym', ans: 'veloz', opts: ['lento', 'veloz', 'grande'] },
+                    { id: 'l_pb_8', q: 'Antónimo de "alto":', visual: '', type: 'antonym', ans: 'bajo', opts: ['alto', 'bajo', 'grande'] }
                 ],
                 primaria_media: [
-                    { q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
-                    { q: '¿Qué tipo de palabra es "rápidamente"?', visual: '', type: 'grammar', ans: 'adverbio', opts: ['sustantivo', 'adjetivo', 'adverbio'] },
-                    { q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] },
-                    { q: '¿Qué animal hace este sonido?', visual: '🐔', type: 'animal_sound', ans: 'pollo', opts: ['pato', 'pollo', 'gallo'] }
+                    { id: 'l_pm_1', q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
+                    { id: 'l_pm_2', q: '¿Qué tipo de palabra es "rápidamente"?', visual: '', type: 'grammar', ans: 'adverbio', opts: ['sustantivo', 'adjetivo', 'adverbio'] },
+                    { id: 'l_pm_3', q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] },
+                    { id: 'l_pm_4', q: '¿Qué animal hace este sonido?', visual: '🐸', type: 'animal_sound', ans: 'rana', opts: ['pato', 'rana', 'gallo'] },
+                    { id: 'l_pm_5', q: '¿Cuál es el sujeto en "María lee"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
+                    { id: 'l_pm_6', q: 'Sinónimo de "hermoso":', visual: '', type: 'synonym', ans: 'bello', opts: ['feo', 'bello', 'grande'] },
+                    { id: 'l_pm_7', q: 'Antónimo de "frío":', visual: '', type: 'antonym', ans: 'caliente', opts: ['frío', 'caliente', 'tibio'] }
                 ],
                 primaria_alta: [
-                    { q: '¿Cuál es el sujeto en: "María lee un libro"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
-                    { q: '¿Qué figura literaria es: "Tus ojos son como estrellas"?', visual: '', type: 'literary', ans: 'símil', opts: ['metáfora', 'símil', 'hipérbole'] },
-                    { q: 'La palabra "murciélago" tiene:', visual: '', type: 'spelling', ans: '5 sílabas', opts: ['4 sílabas', '5 sílabas', '6 sílabas'] }
+                    { id: 'l_pa_1', q: '¿Cuál es el sujeto en: "María lee un libro"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
+                    { id: 'l_pa_2', q: '¿Qué figura literaria es: "Tus ojos son como estrellas"?', visual: '', type: 'literary', ans: 'símil', opts: ['metáfora', 'símil', 'hipérbole'] },
+                    { id: 'l_pa_3', q: 'La palabra "murciélago" tiene:', visual: '', type: 'spelling', ans: '5 sílabas', opts: ['4 sílabas', '5 sílabas', '6 sílabas'] },
+                    { id: 'l_pa_4', q: '¿Qué es una oración?', visual: '', type: 'grammar', ans: 'conjunto de palabras', opts: ['una palabra', 'conjunto de palabras', 'una letra'] },
+                    { id: 'l_pa_5', q: 'Sinónimo de "inteligente":', visual: '', type: 'synonym', ans: 'listo', opts: ['tonto', 'listo', 'grande'] },
+                    { id: 'l_pa_6', q: 'Antónimo de "valiente":', visual: '', type: 'antonym', ans: 'cobarde', opts: ['valiente', 'cobarde', 'fuerte'] }
                 ],
                 secundaria: [
-                    { q: '¿Quién escribió "Los Comentarios Reales"?', visual: '', type: 'literature', ans: 'Inca Garcilaso', opts: ['Mario Vargas Llosa', 'Inca Garcilaso', 'César Vallejo'] },
-                    { q: '¿Qué es una oración compuesta?', visual: '', type: 'grammar', ans: 'tiene 2+ verbos', opts: ['tiene 1 verbo', 'tiene 2+ verbos', 'no tiene verbo'] },
-                    { q: 'El Romanticismo en Perú se caracteriza por:', visual: '', type: 'literature', ans: 'sentimentalismo', opts: ['racionalismo', 'sentimentalismo', 'realismo'] }
+                    { id: 'l_sec_1', q: '¿Quién escribió "Los Comentarios Reales"?', visual: '', type: 'literature', ans: 'Inca Garcilaso', opts: ['Mario Vargas Llosa', 'Inca Garcilaso', 'César Vallejo'] },
+                    { id: 'l_sec_2', q: '¿Qué es una oración compuesta?', visual: '', type: 'grammar', ans: 'tiene 2+ verbos', opts: ['tiene 1 verbo', 'tiene 2+ verbos', 'no tiene verbo'] },
+                    { id: 'l_sec_3', q: 'El Romanticismo en Perú se caracteriza por:', visual: '', type: 'literature', ans: 'sentimentalismo', opts: ['racionalismo', 'sentimentalismo', 'realismo'] },
+                    { id: 'l_sec_4', q: '¿Quién escribió "Tradiciones Peruanas"?', visual: '', type: 'literature', ans: 'Ricardo Palma', opts: ['Ricardo Palma', 'César Vallejo', 'José María Arguedas'] },
+                    { id: 'l_sec_5', q: '¿Qué es un adjetivo?', visual: '', type: 'grammar', ans: 'califica al sustantivo', opts: ['nombra objetos', 'califica al sustantivo', 'indica acción'] }
                 ]
             },
             coding: {
                 inicial: [
-                    { q: '¿Qué viene después?', visual: '🔴 🔵 🔴 ?', type: 'pattern', ans: '🔵', opts: ['🔴', '', '🟢'] },
-                    { q: 'Ordena: pequeño, mediano, ?', visual: '', type: 'sequence', ans: 'grande', opts: ['pequeño', 'mediano', 'grande'] }
+                    { id: 'c_ini_1', q: '¿Qué viene después?', visual: '🔴 🔵 🔴 ?', type: 'pattern', ans: '🔵', opts: ['🔴', '', '🟢'] },
+                    { id: 'c_ini_2', q: 'Ordena: pequeño, mediano, ?', visual: '', type: 'sequence', ans: 'grande', opts: ['pequeño', 'mediano', 'grande'] },
+                    { id: 'c_ini_3', q: '¿Qué sigue?', visual: '▲ ▼ ▲ ?', type: 'pattern', ans: '▼', opts: ['▲', '▼', '▶'] },
+                    { id: 'c_ini_4', q: 'Ordena de menor a mayor: 1, 2, ?', visual: '', type: 'sequence', ans: 3, opts: [2, 3, 4] }
                 ],
                 primaria_baja: [
-                    { q: 'Si A=1, B=2, ¿C=?', visual: '', type: 'logic', ans: 3, opts: [2, 3, 4, 5] },
-                    { q: 'Completa: 2, 4, 6, ?', visual: '', type: 'pattern', ans: 8, opts: [7, 8, 9, 10] },
-                    { q: '¿Qué instrucción sigue?', visual: '➡️ ➡️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] }
+                    { id: 'c_pb_1', q: 'Si A=1, B=2, ¿C=?', visual: '', type: 'logic', ans: 3, opts: [2, 3, 4, 5] },
+                    { id: 'c_pb_2', q: 'Completa: 2, 4, 6, ?', visual: '', type: 'pattern', ans: 8, opts: [7, 8, 9, 10] },
+                    { id: 'c_pb_3', q: '¿Qué instrucción sigue?', visual: '➡️ ➡️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] },
+                    { id: 'c_pb_4', q: 'Si 1=A, 2=B, 3=C, ¿4=?', visual: '', type: 'logic', ans: 'D', opts: ['C', 'D', 'E'] },
+                    { id: 'c_pb_5', q: 'Completa: 5, 10, 15, ?', visual: '', type: 'pattern', ans: 20, opts: [18, 20, 22, 25] }
                 ],
                 primaria_media: [
-                    { q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', type: 'pattern', ans: 7, opts: [6, 7, 8, 9] },
-                    { q: 'Si x=5 y x>3, entonces...', visual: '', type: 'condition', ans: 'verdadero', opts: ['verdadero', 'falso'] },
-                    { q: 'Ordena: 15, 8, 23 → ?', visual: '', type: 'algorithm', ans: '8, 15, 23', opts: ['23, 15, 8', '8, 15, 23', '15, 8, 23'] }
+                    { id: 'c_pm_1', q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', type: 'pattern', ans: 7, opts: [6, 7, 8, 9] },
+                    { id: 'c_pm_2', q: 'Si x=5 y x>3, entonces...', visual: '', type: 'condition', ans: 'verdadero', opts: ['verdadero', 'falso'] },
+                    { id: 'c_pm_3', q: 'Ordena: 15, 8, 23 → ?', visual: '', type: 'algorithm', ans: '8, 15, 23', opts: ['23, 15, 8', '8, 15, 23', '15, 8, 23'] },
+                    { id: 'c_pm_4', q: 'Completa: 10, 20, 30, ?', visual: '', type: 'pattern', ans: 40, opts: [35, 40, 45, 50] },
+                    { id: 'c_pm_5', q: 'Si A=verdadero y B=falso, A O B =', visual: '', type: 'logic', ans: 'verdadero', opts: ['verdadero', 'falso'] }
                 ],
                 primaria_alta: [
-                    { q: 'En binario, 5 es:', visual: '', type: 'binary', ans: '101', opts: ['100', '101', '110', '111'] },
-                    { q: 'Si A=verdadero y B=falso, A Y B =', visual: '', type: 'logic', ans: 'falso', opts: ['verdadero', 'falso'] },
-                    { q: '¿Qué es un algoritmo?', visual: '', type: 'concept', ans: 'serie de pasos', opts: ['un número', 'serie de pasos', 'una figura'] }
+                    { id: 'c_pa_1', q: 'En binario, 5 es:', visual: '', type: 'binary', ans: '101', opts: ['100', '101', '110', '111'] },
+                    { id: 'c_pa_2', q: 'Si A=verdadero y B=falso, A Y B =', visual: '', type: 'logic', ans: 'falso', opts: ['verdadero', 'falso'] },
+                    { id: 'c_pa_3', q: '¿Qué es un algoritmo?', visual: '', type: 'concept', ans: 'serie de pasos', opts: ['un número', 'serie de pasos', 'una figura'] },
+                    { id: 'c_pa_4', q: 'Completa: 2, 4, 8, 16, ?', visual: '', type: 'pattern', ans: 32, opts: [24, 32, 40, 48] },
+                    { id: 'c_pa_5', q: 'En binario, 3 es:', visual: '', type: 'binary', ans: '11', opts: ['10', '11', '100', '101'] }
                 ],
                 secundaria: [
-                    { q: '¿Qué valor tiene x? x = 3 + 2 × 4', visual: '', type: 'algorithm', ans: 11, opts: [20, 11, 14, 9] },
-                    { q: 'En Python, print(2**3) muestra:', visual: '', type: 'programming', ans: 8, opts: [6, 8, 9, 5] },
-                    { q: '¿Qué es una variable?', visual: '', type: 'concept', ans: 'almacena datos', opts: ['un número fijo', 'almacena datos', 'una operación'] }
+                    { id: 'c_sec_1', q: '¿Qué valor tiene x? x = 3 + 2 × 4', visual: '', type: 'algorithm', ans: 11, opts: [20, 11, 14, 9] },
+                    { id: 'c_sec_2', q: 'En Python, print(2**3) muestra:', visual: '', type: 'programming', ans: 8, opts: [6, 8, 9, 5] },
+                    { id: 'c_sec_3', q: '¿Qué es una variable?', visual: '', type: 'concept', ans: 'almacena datos', opts: ['un número fijo', 'almacena datos', 'una operación'] },
+                    { id: 'c_sec_4', q: '¿Qué es un bucle?', visual: '', type: 'concept', ans: 'repite instrucciones', opts: ['suma números', 'repite instrucciones', 'guarda datos'] },
+                    { id: 'c_sec_5', q: 'En binario, 10 es:', visual: '', type: 'binary', ans: '1010', opts: ['1001', '1010', '1011', '1100'] }
                 ]
             },
             thinking: {
                 inicial: [
-                    { q: 'Tienes 2 manzanas y comes 1. ¿Cuántas quedan?', visual: '🍎🍎', type: 'problem', ans: 1, opts: [0, 1, 2] },
-                    { q: '¿Qué necesitas para ver de noche?', visual: '🌙', type: 'reasoning', ans: 'luz', opts: ['agua', 'luz', 'comida'] }
+                    { id: 't_ini_1', q: 'Tienes 2 manzanas y comes 1. ¿Cuántas quedan?', visual: '🍎🍎', type: 'problem', ans: 1, opts: [0, 1, 2] },
+                    { id: 't_ini_2', q: '¿Qué necesitas para ver de noche?', visual: '🌙', type: 'reasoning', ans: 'luz', opts: ['agua', 'luz', 'comida'] },
+                    { id: 't_ini_3', q: 'Si hace frío, necesitas...', visual: '', type: 'reasoning', ans: 'abrigo', opts: ['sombrero', 'abrigo', 'sandalias'] },
+                    { id: 't_ini_4', q: '¿Qué usas para escribir?', visual: '', type: 'reasoning', ans: 'lápiz', opts: ['tenedor', 'lápiz', 'zapato'] }
                 ],
                 primaria_baja: [
-                    { q: 'Si hoy es lunes, mañana será...', visual: '', type: 'logic', ans: 'martes', opts: ['domingo', 'martes', 'miércoles'] },
-                    { q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', type: 'time', ans: '5:00', opts: ['4:00', '5:00', '6:00'] }
+                    { id: 't_pb_1', q: 'Si hoy es lunes, mañana será...', visual: '', type: 'logic', ans: 'martes', opts: ['domingo', 'martes', 'miércoles'] },
+                    { id: 't_pb_2', q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', type: 'time', ans: '5:00', opts: ['4:00', '5:00', '6:00'] },
+                    { id: 't_pb_3', q: 'Si tienes 5 soles y gastas 2, ¿cuánto te queda?', visual: '', type: 'problem', ans: 3, opts: [2, 3, 4, 5] },
+                    { id: 't_pb_4', q: '¿Qué día viene después del martes?', visual: '', type: 'logic', ans: 'miércoles', opts: ['lunes', 'miércoles', 'jueves'] }
                 ],
                 primaria_media: [
-                    { q: 'Ana tiene 8 años. Luis tiene 3 años más. ¿Cuántos años tiene Luis?', visual: '', type: 'problem', ans: 11, opts: [9, 11, 13, 15] },
-                    { q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', type: 'logic', ans: 4, opts: [2, 3, 4, 5] }
+                    { id: 't_pm_1', q: 'Ana tiene 8 años. Luis tiene 3 años más. ¿Cuántos años tiene Luis?', visual: '', type: 'problem', ans: 11, opts: [9, 11, 13, 15] },
+                    { id: 't_pm_2', q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', type: 'logic', ans: 4, opts: [2, 3, 4, 5] },
+                    { id: 't_pm_3', q: 'Si 2 lápices cuestan S/4, ¿cuánto cuestan 5 lápices?', visual: '', type: 'problem', ans: 10, opts: [8, 10, 12, 14] },
+                    { id: 't_pm_4', q: 'Si ayer fue domingo, ¿qué día es hoy?', visual: '', type: 'logic', ans: 'lunes', opts: ['domingo', 'lunes', 'martes'] }
                 ],
                 primaria_alta: [
-                    { q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay?', visual: '🐄', type: 'problem', ans: 16, opts: [10, 12, 14, 16] },
-                    { q: 'Si 5 lápices cuestan S/10, ¿cuánto cuestan 3 lápices?', visual: '', type: 'problem', ans: 6, opts: [4, 6, 8, 10] }
+                    { id: 't_pa_1', q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay?', visual: '🐄', type: 'problem', ans: 16, opts: [10, 12, 14, 16] },
+                    { id: 't_pa_2', q: 'Si 5 lápices cuestan S/10, ¿cuánto cuestan 3 lápices?', visual: '', type: 'problem', ans: 6, opts: [4, 6, 8, 10] },
+                    { id: 't_pa_3', q: 'Un rectángulo mide 6 cm de largo y 4 cm de ancho. ¿Cuál es su perímetro?', visual: '', type: 'problem', ans: 20, opts: [10, 20, 24, 30] },
+                    { id: 't_pa_4', q: 'Si 3 amigos reparten 12 caramelos equitativamente, ¿cuántos le tocan a cada uno?', visual: '', type: 'problem', ans: 4, opts: [3, 4, 5, 6] }
                 ],
                 secundaria: [
-                    { q: 'Un artículo cuesta S/120 con 20% de descuento. ¿Cuánto pagas?', visual: '', type: 'problem', ans: 96, opts: [96, 100, 104, 110] },
-                    { q: 'Si 3 obreros hacen una obra en 12 días, ¿cuánto tardarán 6 obreros?', visual: '', type: 'reasoning', ans: 6, opts: [4, 6, 8, 24] },
-                    { q: 'La suma de 3 números consecutivos es 30. ¿Cuál es el mayor?', visual: '', type: 'algebra', ans: 11, opts: [9, 10, 11, 12] }
+                    { id: 't_sec_1', q: 'Un artículo cuesta S/120 con 20% de descuento. ¿Cuánto pagas?', visual: '', type: 'problem', ans: 96, opts: [96, 100, 104, 110] },
+                    { id: 't_sec_2', q: 'Si 3 obreros hacen una obra en 12 días, ¿cuánto tardarán 6 obreros?', visual: '', type: 'reasoning', ans: 6, opts: [4, 6, 8, 24] },
+                    { id: 't_sec_3', q: 'La suma de 3 números consecutivos es 30. ¿Cuál es el mayor?', visual: '', type: 'algebra', ans: 11, opts: [9, 10, 11, 12] },
+                    { id: 't_sec_4', q: 'Si el doble de un número es 24, ¿cuál es el número?', visual: '', type: 'algebra', ans: 12, opts: [10, 12, 14, 16] },
+                    { id: 't_sec_5', q: 'Un coche viaja a 60 km/h. ¿Cuántos kilómetros recorre en 3 horas?', visual: '', type: 'problem', ans: 180, opts: [120, 150, 180, 200] }
                 ]
             }
         };
@@ -584,10 +628,8 @@
             const blockedDate = localStorage.getItem('mq_blocked_date');
             const today = getTodayKey();
             
-            // Si el bloqueo es de hoy, está bloqueado
             if (blockedDate === today) return true;
             
-            // Si el bloqueo es de un día anterior, liberar
             if (blockedDate && blockedDate !== today) {
                 localStorage.removeItem('mq_daily_blocked');
                 localStorage.removeItem('mq_blocked_date');
@@ -621,12 +663,12 @@
         let correctCount = 0;
         let streak = 0;
         let timer = null;
-        let timeLeft = 1800; // 30 minutos
+        let timeLeft = 1200;
         let stats = { xp: 0, stars: 0, level: 1 };
         let speechSynth = window.speechSynthesis;
         let voices = [];
+        let sessionStartTime = null;
 
-        // CARGAR VOCES
         function loadVoices() {
             voices = speechSynth.getVoices();
         }
@@ -635,7 +677,6 @@
             speechSynth.onvoiceschanged = loadVoices;
         }
 
-        // AUDIO - SOLO CUANDO SE PRESIONA EL BOTÓN
         function speakQuestion() {
             if (!currentExercise) return;
             
@@ -658,17 +699,25 @@
             speechSynth.speak(utterance);
         }
 
-        // TIMER
         function startTimer() {
+            if (!sessionStartTime) {
+                sessionStartTime = Date.now();
+            }
+            
             updateTimerDisplay();
             document.getElementById('timer-display').classList.add('active');
             
+            if (timer) {
+                clearInterval(timer);
+            }
+            
             timer = setInterval(() => {
-                timeLeft--;
+                const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+                timeLeft = Math.max(0, 1200 - elapsed);
+                
                 updateTimerDisplay();
                 
-                // Alerta cuando queda poco tiempo
-                if (timeLeft <= 300) { // 5 minutos
+                if (timeLeft <= 300) {
                     document.getElementById('timer-display').classList.add('urgent');
                 }
                 
@@ -678,7 +727,6 @@
                     return;
                 }
                 
-                // Guardar progreso cada minuto
                 if (timeLeft % 60 === 0) {
                     saveProgress();
                 }
@@ -691,14 +739,12 @@
             document.getElementById('timer-text').textContent = 
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
             
-            // Actualizar info del tiempo restante en categorías
             const dailyInfo = document.getElementById('daily-time-info');
             if (dailyInfo) {
-                dailyInfo.textContent = `⏱️ Tiempo restante hoy: ${mins}m ${secs}s de 30 min`;
+                dailyInfo.textContent = `⏱️ Tiempo restante hoy: ${mins}m ${secs}s de 20 min`;
             }
         }
 
-        // GUARDAR PROGRESO
         function saveProgress() {
             const progress = {
                 user,
@@ -710,12 +756,12 @@
                 streak,
                 timeLeft,
                 stats,
+                sessionStartTime,
                 savedAt: new Date().toISOString()
             };
             localStorage.setItem('mq_progress', JSON.stringify(progress));
         }
 
-        // GUARDAR ESTADÍSTICAS DE SESIÓN
         function saveSessionStats() {
             const sessionStats = {
                 xp: stats.xp,
@@ -725,7 +771,6 @@
             localStorage.setItem('mq_session_stats', JSON.stringify(sessionStats));
         }
 
-        // CARGAR PROGRESO
         function loadProgress() {
             const saved = localStorage.getItem('mq_progress');
             if (saved) {
@@ -737,8 +782,9 @@
                 questionNum = progress.questionNum || 1;
                 correctCount = progress.correctCount || 0;
                 streak = progress.streak || 0;
-                timeLeft = progress.timeLeft || 1800;
+                timeLeft = progress.timeLeft || 1200;
                 stats = progress.stats || { xp: 0, stars: 0, level: 1 };
+                sessionStartTime = progress.sessionStartTime || null;
                 return true;
             }
             return false;
@@ -748,26 +794,22 @@
             return GRADE_LEVELS[age.toString()] || { level: 'Desconocido', grade: '', category: 'primaria_baja' };
         }
 
-        // MOSTRAR PANTALLA DE BLOQUEO
         function showBlockedScreen() {
             const sessionStats = getBlockedSessionStats();
             document.getElementById('blocked-xp').textContent = sessionStats.xp;
             document.getElementById('blocked-correct').textContent = sessionStats.correct;
             document.getElementById('blocked-level').textContent = sessionStats.level;
             
-            // Ocultar todas las pantallas
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('category-screen').classList.add('hidden');
             document.getElementById('exercise-screen').classList.add('hidden');
             document.getElementById('timer-display').classList.remove('active');
             document.getElementById('streak-display').classList.remove('show');
             
-            // Mostrar pantalla de bloqueo
             document.getElementById('blocked-screen').classList.remove('hidden');
             
-            // Calcular tiempo hasta mañana
             updateTimeUntilUnlock();
-            setInterval(updateTimeUntilUnlock, 60000); // Actualizar cada minuto
+            setInterval(updateTimeUntilUnlock, 60000);
         }
 
         function updateTimeUntilUnlock() {
@@ -787,7 +829,6 @@
         }
 
         function selectCategory(cat) {
-            // Verificar si está bloqueado antes de permitir entrar
             if (isBlocked()) {
                 showBlockedScreen();
                 return;
@@ -808,21 +849,22 @@
             const bank = QUESTION_BANK[currentCategory][gradeCategory] || QUESTION_BANK[currentCategory]['primaria_baja'];
             const asked = askedQuestions[currentCategory] || [];
             
-            const available = bank.filter((_, idx) => !asked.includes(idx));
+            // Filtrar preguntas NO hechas usando ID único
+            const available = bank.filter(q => !asked.includes(q.id));
             
             if (available.length === 0) {
+                // Si se acabaron, reiniciar
                 askedQuestions[currentCategory] = [];
-                asked.length = 0;
                 const randomIdx = Math.floor(Math.random() * bank.length);
-                askedQuestions[currentCategory].push(randomIdx);
+                askedQuestions[currentCategory].push(bank[randomIdx].id);
                 return bank[randomIdx];
             }
             
             const randomIdx = Math.floor(Math.random() * available.length);
-            const questionIdx = bank.indexOf(available[randomIdx]);
-            askedQuestions[currentCategory].push(questionIdx);
+            const selectedQuestion = available[randomIdx];
+            askedQuestions[currentCategory].push(selectedQuestion.id);
             
-            return available[randomIdx];
+            return selectedQuestion;
         }
 
         function nextQuestion() {
@@ -880,7 +922,7 @@
         function handleAnimalAnswer(value, btn) {
             if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
             
-            const isCorrect = String(value) === String(currentExercise.ans);
+            const isCorrect = String(value).trim() === String(currentExercise.ans).trim();
             
             if (isCorrect) {
                 btn.classList.add('selected');
@@ -932,7 +974,9 @@
         function handleAnswer(value, btn) {
             if (btn.classList.contains('selected') || btn.classList.contains('wrong')) return;
             
-            const isCorrect = String(value) === String(currentExercise.ans);
+            const selectedValue = String(value).trim();
+            const correctValue = String(currentExercise.ans).trim();
+            const isCorrect = selectedValue === correctValue;
             
             if (isCorrect) {
                 btn.classList.add('selected');
@@ -1005,10 +1049,7 @@
             document.getElementById('timer-display').classList.remove('active');
             document.getElementById('streak-display').classList.remove('show');
             
-            // Guardar estadísticas de sesión
             saveSessionStats();
-            
-            // BLOQUEAR acceso hasta mañana
             setBlocked();
             
             const xpGain = correctCount * 10;
@@ -1021,18 +1062,16 @@
             message += `Correctas: ${correctCount}/10\n`;
             message += `XP ganados: ${xpGain}\n`;
             message += `Nivel: ${stats.level}\n\n`;
-            message += 'Has usado tus 30 minutos de hoy.\n';
+            message += 'Has usado tus 20 minutos de hoy.\n';
             message += 'La plataforma se bloqueará hasta mañana.\n';
-            message += '¡Vuelve mañana para seguir aprendiendo! 🇵';
+            message += '¡Vuelve mañana para seguir aprendiendo! 🇵🇪';
             
             alert(message);
             
-            // Mostrar pantalla de bloqueo
             showBlockedScreen();
         }
 
         function showCategories() {
-            // Verificar bloqueo antes de mostrar categorías
             if (isBlocked()) {
                 showBlockedScreen();
                 return;
@@ -1051,7 +1090,6 @@
             document.getElementById(id).classList.remove('hidden');
         }
 
-        // INIT
         document.getElementById('age-input').addEventListener('input', function() {
             const age = parseInt(this.value);
             if (age >= 3 && age <= 14) {
@@ -1064,7 +1102,6 @@
         });
 
         document.getElementById('start-btn').onclick = () => {
-            // Verificar si está bloqueado ANTES de permitir login
             if (isBlocked()) {
                 showBlockedScreen();
                 return;
@@ -1089,19 +1126,15 @@
             showScreen('category-screen');
         };
 
-        // VERIFICAR AL CARGAR LA PÁGINA
         window.onload = () => {
             loadVoices();
             
-            // Primero verificar si está bloqueado
             if (isBlocked()) {
-                // Si está bloqueado, intentar cargar datos para mostrar estadísticas
                 loadProgress();
                 showBlockedScreen();
                 return;
             }
             
-            // Si no está bloqueado, verificar progreso guardado
             const hasProgress = loadProgress();
             if (hasProgress && user) {
                 document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
