@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathQuest - Aprende como en Smartick</title>
+    <title>MathQuest - Educación Peruana</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,16 +17,10 @@
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
         @keyframes pop { 0%{transform:scale(0.8);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
         @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
-        @keyframes bounceIn { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
-        @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes timerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
 
         .float { animation: float 3s ease-in-out infinite; }
-        .pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .shake { animation: shake 0.5s ease-in-out; }
-        .bounce-in { animation: bounceIn 0.5s ease-out; }
-        .slide-up { animation: slideUp 0.6s ease-out; }
+        .pop { animation: pop 0.4s ease-out; }
+        .shake { animation: shake 0.5s; }
 
         .category-card {
             background: white;
@@ -39,15 +33,7 @@
             max-width: 350px;
             margin: 0 auto;
         }
-        .category-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
-        .category-card.locked {
-            opacity: 0.6;
-            cursor: not-allowed;
-            filter: grayscale(0.5);
-        }
+        .category-card:hover { transform: translateY(-8px) scale(1.02); }
 
         .category-icon {
             width: 120px;
@@ -58,32 +44,6 @@
             align-items: center;
             justify-content: center;
             font-size: 64px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .category-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #2C3E50;
-            margin-bottom: 16px;
-        }
-
-        .category-desc {
-            font-size: 15px;
-            color: #7F8C8D;
-            line-height: 1.6;
-        }
-
-        .timer-badge {
-            background: linear-gradient(135deg, #4ECDC4, #44A08D);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 20px;
-            font-weight: 800;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin: 16px 0;
         }
 
         .btn {
@@ -119,7 +79,6 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            min-height: 60px;
         }
         .option-btn:hover { border-color: #3498DB; }
         .option-btn.selected { border-color: #2ECC71; background: #E8F8F0; transform: scale(1.05); }
@@ -147,23 +106,6 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 12px;
-            transition: all 0.2s;
-        }
-        .audio-btn:hover { transform: scale(1.1); }
-
-        .progress-container {
-            background: rgba(255,255,255,0.3);
-            border-radius: 20px;
-            height: 30px;
-            overflow: hidden;
-            border: 3px solid white;
-            margin: 20px 0;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #2ECC71, #27AE60);
-            height: 100%;
-            transition: width 0.8s;
-            border-radius: 17px;
         }
 
         .timer-display {
@@ -175,15 +117,13 @@
             border-radius: 20px;
             font-weight: 900;
             font-size: 20px;
-            color: #2C3E50;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             display: none;
             align-items: center;
             gap: 12px;
             z-index: 1000;
         }
-        .timer-display.active { display: flex; animation: timerPulse 2s ease-in-out infinite; }
-        .timer-icon { font-size: 32px; }
+        .timer-display.active { display: flex; }
 
         .streak-display {
             position: fixed;
@@ -194,12 +134,10 @@
             border-radius: 20px;
             font-weight: 900;
             font-size: 18px;
-            color: #2C3E50;
-            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
             display: none;
-            z-index: 1000;
             align-items: center;
             gap: 8px;
+            z-index: 1000;
         }
         .streak-display.show { display: flex; }
 
@@ -214,42 +152,63 @@
         .feedback.correct { background: #2ECC71; color: white; }
         .feedback.wrong { background: #E74C3C; color: white; }
 
-        .question-visual {
-            font-size: 80px;
+        .visual-container {
             margin: 20px 0;
-            animation: bounceIn 0.5s ease-out;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .coding-block {
-            background: #f8f9fa;
-            border: 3px solid #dee2e6;
-            border-radius: 12px;
+        .shape-visual {
+            width: 80px;
+            height: 80px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+
+        .color-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 12px;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.3);
+            border-radius: 20px;
+            height: 24px;
+            overflow: hidden;
+            border: 3px solid white;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #2ECC71, #27AE60);
+            height: 100%;
+            transition: width 0.8s;
+        }
+
+        .save-notice {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
             padding: 16px;
-            margin: 8px 0;
-            font-family: 'Courier New', monospace;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .coding-block:hover { border-color: #667eea; background: #e9ecef; }
-        .coding-block.selected { border-color: #2ECC71; background: #d4edda; }
-
-        .thinking-scenario {
-            background: linear-gradient(135deg, #ffeaa7, #fdcb6e);
             border-radius: 16px;
-            padding: 24px;
             margin: 20px 0;
-            font-size: 18px;
-            line-height: 1.6;
-            font-weight: 600;
+            font-weight: 700;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <!-- TIMER -->
     <div id="timer-display" class="timer-display">
-        <span class="timer-icon">⏱️</span>
-        <span id="timer-text">15:00</span>
+        <span>⏱️</span>
+        <span id="timer-text">30:00</span>
     </div>
 
     <!-- STREAK -->
@@ -260,69 +219,55 @@
 
     <!-- LOGIN -->
     <div id="login-screen" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
-        <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 450px; width: 100%; text-align: center;">
-            <div class="float" style="font-size: 80px; margin-bottom: 16px;">🎓</div>
-            <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 8px; color: #2C3E50;">MathQuest</h1>
-            <p style="color: #7F8C8D; margin-bottom: 32px; font-size: 16px;">Aprende como en Smartick - 4 áreas de aprendizaje</p>
+        <div class="card pop" style="background: white; border-radius: 32px; padding: 40px; max-width: 500px; width: 100%; text-align: center;">
+            <div class="float" style="font-size: 80px; margin-bottom: 16px;">🇵🇪</div>
+            <h1 style="font-size: 36px; font-weight: 900; margin-bottom: 8px; color: #2C3E50;">MathQuest Perú</h1>
+            <p style="color: #7F8C8D; margin-bottom: 24px; font-size: 16px;">Educación adaptada al currículo peruano</p>
+            
             <input id="name-input" placeholder="Tu nombre" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
-            <input id="age-input" type="number" placeholder="Tu edad (4-14)" min="4" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 24px;">
-            <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar Aventura!</button>
+            
+            <input id="age-input" type="number" placeholder="Tu edad (3-14)" min="3" max="14" style="width: 100%; padding: 16px 20px; border-radius: 16px; border: 3px solid #E0E0E0; font-size: 18px; font-family: 'Nunito'; margin-bottom: 16px;">
+            
+            <div id="grade-display" style="background: #f8f9fa; padding: 12px; border-radius: 12px; margin-bottom: 24px; font-weight: 700; color: #667eea;"></div>
+            
+            <button id="start-btn" class="btn btn-primary" style="width: 100%; font-size: 20px;">🚀 ¡Comenzar!</button>
         </div>
     </div>
 
     <!-- CATEGORY SELECTION -->
-    <div id="category-screen" class="hidden" style="min-height: 100vh; padding: 40px 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div id="category-screen" class="hidden" style="min-height: 100vh; padding: 40px 20px;">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 40px;">
                 <h1 id="user-greeting" style="font-size: 36px; font-weight: 900; color: white; margin-bottom: 16px;"></h1>
-                <div class="timer-badge">
-                    <span>⏱️</span>
-                    <span>Solo 15 minutos al día</span>
-                </div>
-                <div style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 16px; margin-top: 16px; font-weight: 700;">
-                    🧠 Inteligencia Artificial: Sesiones personalizadas para ti
+                <div id="grade-info" style="background: rgba(255,255,255,0.2); color: white; padding: 12px 24px; border-radius: 16px; font-weight: 700; margin-bottom: 16px;"></div>
+                <div style="background: rgba(255,255,255,0.9); color: #2C3E50; padding: 12px 24px; border-radius: 16px; font-weight: 700;">
+                    ⏱️ 30 minutos al día - Tu progreso se guarda automáticamente
                 </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; margin-top: 40px;">
-                <div class="category-card slide-up" onclick="selectCategory('matematicas')" style="animation-delay: 0.1s">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #667eea, #764ba2)">📐</div>
-                    <div class="category-title">Matemáticas</div>
-                    <div class="category-desc">
-                        Cálculo, geometría, lógica y resolución de problemas. 
-                        Alcanza tu máximo potencial matemático.
-                    </div>
-                    <div style="margin-top: 16px; font-weight: 800; color: #667eea;">🎯 Ejercicios adaptativos</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px;">
+                <div class="category-card" onclick="selectCategory('matematicas')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">📐</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Matemáticas</h2>
+                    <p style="color: #7F8C8D;">Números, operaciones, geometría y resolución de problemas</p>
                 </div>
 
-                <div class="category-card slide-up" onclick="selectCategory('lectura')" style="animation-delay: 0.2s">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c)">📚</div>
-                    <div class="category-title">Lectura</div>
-                    <div class="category-desc">
-                        Comprensión lectora, vocabulario, ortografía y gramática. 
-                        Desde letras hasta textos complejos.
-                    </div>
-                    <div style="margin-top: 16px; font-weight: 800; color: #f5576c;">📖 Mejora tu lectura</div>
+                <div class="category-card" onclick="selectCategory('lectura')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">📚</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Lectura</h2>
+                    <p style="color: #7F8C8D;">Comprensión lectora, vocabulario y ortografía</p>
                 </div>
 
-                <div class="category-card slide-up" onclick="selectCategory('coding')" style="animation-delay: 0.3s">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe)">💻</div>
-                    <div class="category-title">Coding</div>
-                    <div class="category-desc">
-                        Programación, pensamiento computacional y lógica de algoritmos. 
-                        Prepárate para el futuro.
-                    </div>
-                    <div style="margin-top: 16px; font-weight: 800; color: #00f2fe;">🤖 Aprende a programar</div>
+                <div class="category-card" onclick="selectCategory('coding')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">💻</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Coding</h2>
+                    <p style="color: #7F8C8D;">Pensamiento computacional y lógica de programación</p>
                 </div>
 
-                <div class="category-card slide-up" onclick="selectCategory('thinking')" style="animation-delay: 0.4s">
-                    <div class="category-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7)">🧩</div>
-                    <div class="category-title">Thinking</div>
-                    <div class="category-desc">
-                        Pensamiento crítico, toma de decisiones y razonamiento lógico. 
-                        Aprende a pensar antes de actuar.
-                    </div>
-                    <div style="margin-top: 16px; font-weight: 800; color: #43e97b;">💭 Desarrolla tu mente</div>
+                <div class="category-card" onclick="selectCategory('thinking')">
+                    <div class="category-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">🧩</div>
+                    <h2 style="font-size: 24px; font-weight: 900; margin-bottom: 12px;">Thinking</h2>
+                    <p style="color: #7F8C8D;">Razonamiento lógico y pensamiento crítico</p>
                 </div>
             </div>
         </div>
@@ -331,126 +276,210 @@
     <!-- EXERCISE SCREEN -->
     <div id="exercise-screen" class="hidden" style="min-height: 100vh; background: linear-gradient(180deg, #E0F6FF 0%, #98D8C8 100%); padding: 20px;">
         <div style="max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-            <button onclick="showCategories()" class="btn" style="background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">← Volver</button>
-            <div style="display: flex; gap: 16px; align-items: center;">
-                <div style="background: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 18px;" id="question-counter">1 / 10</div>
-                <div id="category-badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 800;"></div>
-            </div>
+            <button onclick="showCategories()" class="btn" style="background: white;">← Volver</button>
+            <div style="background: white; padding: 8px 20px; border-radius: 20px; font-weight: 800;" id="question-counter">1 / 10</div>
         </div>
 
         <div class="card pop" style="max-width: 800px; margin: 0 auto; text-align: center;">
             <button class="audio-btn" onclick="speakQuestion()">
-                🔊 Escuchar
+                🔊 Escuchar pregunta
             </button>
             <div style="font-size: 18px; color: #7F8C8D; margin-bottom: 8px;" id="instruction-text"></div>
             <h2 id="question-text" style="font-size: 32px; font-weight: 900; color: #2C3E50; margin-bottom: 24px;"></h2>
-            <div id="visual-container"></div>
+            <div id="visual-container" class="visual-container"></div>
             <div id="options-container" style="max-width: 500px; margin: 20px auto 0;"></div>
             <div id="feedback-container" style="margin-top: 24px;"></div>
         </div>
     </div>
 
     <script>
-        // CATEGORÍAS
-        const CATEGORIES = {
-            matematicas: { name: 'Matemáticas', icon: '📐', color: '#667eea' },
-            lectura: { name: 'Lectura', icon: '📚', color: '#f5576c' },
-            coding: { name: 'Coding', icon: '💻', color: '#00f2fe' },
-            thinking: { name: 'Thinking', icon: '🧩', color: '#43e97b' }
+        // CURRÍCULO PERUANO POR NIVELES
+        const GRADE_LEVELS = {
+            '3': { level: 'Inicial', grade: '3 años', category: 'inicial' },
+            '4': { level: 'Inicial', grade: '4 años', category: 'inicial' },
+            '5': { level: 'Inicial', grade: '5 años', category: 'inicial' },
+            '6': { level: 'Primaria', grade: '1° grado', category: 'primaria_baja' },
+            '7': { level: 'Primaria', grade: '2° grado', category: 'primaria_baja' },
+            '8': { level: 'Primaria', grade: '3° grado', category: 'primaria_media' },
+            '9': { level: 'Primaria', grade: '4° grado', category: 'primaria_media' },
+            '10': { level: 'Primaria', grade: '5° grado', category: 'primaria_alta' },
+            '11': { level: 'Primaria', grade: '6° grado', category: 'primaria_alta' },
+            '12': { level: 'Secundaria', grade: '1° año', category: 'secundaria' },
+            '13': { level: 'Secundaria', grade: '2° año', category: 'secundaria' },
+            '14': { level: 'Secundaria', grade: '3° año', category: 'secundaria' }
         };
 
-        // BANCO DE PREGUNTAS POR CATEGORÍA
+        // BANCO DE PREGUNTAS POR EDAD Y CATEGORÍA
         const QUESTION_BANK = {
-            matematicas: [
-                { type: 'counting', q: '¿Cuántos hay?', visual: '🍎🍎🍎', ans: 3, opts: [2, 3, 4, 5] },
-                { type: 'counting', q: 'Cuenta las estrellas', visual: '⭐⭐⭐⭐⭐', ans: 5, opts: [4, 5, 6, 7] },
-                { type: 'add', q: '2 + 3 = ?', visual: '', ans: 5, opts: [4, 5, 6, 7] },
-                { type: 'add', q: '4 + 5 = ?', visual: '', ans: 9, opts: [8, 9, 10, 11] },
-                { type: 'sub', q: '8 - 3 = ?', visual: '', ans: 5, opts: [4, 5, 6, 7] },
-                { type: 'sub', q: '10 - 4 = ?', visual: '', ans: 6, opts: [5, 6, 7, 8] },
-                { type: 'mul', q: '3 × 2 = ?', visual: '', ans: 6, opts: [5, 6, 7, 8] },
-                { type: 'mul', q: '4 × 3 = ?', visual: '', ans: 12, opts: [10, 11, 12, 13] },
-                { type: 'geometry', q: '¿Cuántos lados tiene un triángulo?', visual: '🔺', ans: 3, opts: [2, 3, 4, 5] },
-                { type: 'geometry', q: '¿Qué figura es un círculo?', visual: '⭕ □ 🔺', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo', 'rectángulo'] },
-                { type: 'logic', q: '¿Qué número sigue? 2, 4, 6, 8, ?', visual: '', ans: 10, opts: [9, 10, 11, 12] },
-                { type: 'logic', q: '¿Qué número falta? 5, 10, ?, 20', visual: '', ans: 15, opts: [12, 15, 18, 20] }
-            ],
-            lectura: [
-                { type: 'vocabulary', q: '¿Qué palabra significa lo contrario de "grande"?', visual: '', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto', 'largo'] },
-                { type: 'vocabulary', q: '¿Cuál es el sinónimo de "feliz"?', visual: '😊', ans: 'contento', opts: ['triste', 'contento', 'enojado', 'cansado'] },
-                { type: 'spelling', q: '¿Cómo se escribe?', visual: '🐘', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante', 'elefante'] },
-                { type: 'comprehension', q: 'El sol es...', visual: '☀️', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna', 'un cometa'] },
-                { type: 'grammar', q: '¿Cuál es un sustantivo?', visual: '', ans: 'casa', opts: ['correr', 'casa', 'rápido', 'y'] },
-                { type: 'reading', q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱💤', ans: 'duerme', opts: ['come', 'duerme', 'juega', 'corre'] },
-                { type: 'vocabulary', q: '¿Qué palabra rima con "mesa"?', visual: '', ans: 'beso', opts: ['silla', 'beso', 'casa', 'libro'] },
-                { type: 'comprehension', q: 'Si llueve, necesito...', visual: '🌧️', ans: 'paraguas', opts: ['sombrero', 'paraguas', 'gafas', 'guantes'] }
-            ],
-            coding: [
-                { type: 'sequence', q: '¿Qué viene después?', visual: '🔴  🔴 🔵 ?', ans: '🔴', opts: ['🔴', '', '🟢', '🟡'] },
-                { type: 'sequence', q: 'Completa: ▲ ▼ ▲ ▼ ?', visual: '', ans: '▲', opts: ['▲', '▼', '▶', '◀'] },
-                { type: 'logic', q: 'Si A=1, B=2, ¿cuánto es C?', visual: '', ans: 3, opts: [2, 3, 4, 5] },
-                { type: 'pattern', q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', ans: 7, opts: [6, 7, 8, 9] },
-                { type: 'algorithm', q: 'Instrucciones: Avanza 2, gira derecha. ¿Dónde llegas?', visual: '➡️➡️⬇️', ans: 'abajo-derecha', opts: ['arriba', 'abajo-derecha', 'izquierda', 'centro'] },
-                { type: 'debug', q: '¿Qué está mal? 1+2=4', visual: '', ans: 'el resultado', opts: ['el 1', 'el +', 'el resultado', 'nada'] },
-                { type: 'sequence', q: 'Ordena: 3, 1, 2 → ?', visual: '', ans: '1, 2, 3', opts: ['3, 2, 1', '1, 2, 3', '2, 1, 3', '1, 3, 2'] },
-                { type: 'condition', q: 'Si x=5 y x>3, entonces...', visual: '', ans: 'verdadero', opts: ['verdadero', 'falso', 'igual', 'ninguno'] }
-            ],
-            thinking: [
-                { type: 'decision', q: 'Tienes 2 manzanas y regalas 1. ¿Cuántas te quedan?', visual: '🍎🍎', ans: 1, opts: [0, 1, 2, 3] },
-                { type: 'reasoning', q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', ans: 4, opts: [2, 3, 4, 5] },
-                { type: 'problem', q: 'Ana tiene 5 años. Luis tiene 3 años más que Ana. ¿Cuántos años tiene Luis?', visual: '', ans: 8, opts: [6, 7, 8, 9] },
-                { type: 'logic', q: '¿Qué es más pesado?', visual: '🪶 vs 🪨', ans: 'la piedra', opts: ['la pluma', 'la piedra', 'pesan igual', 'no se sabe'] },
-                { type: 'critical', q: 'Si hoy es lunes, ¿qué día fue ayer?', visual: '', ans: 'domingo', opts: ['martes', 'domingo', 'miércoles', 'viernes'] },
-                { type: 'decision', q: 'Necesitas llegar a tiempo. ¿Qué haces?', visual: '⏰', ans: 'salir temprano', opts: ['dormir más', 'salir temprano', 'correr', 'esperar'] },
-                { type: 'reasoning', q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', ans: '5:00', opts: ['4:00', '5:00', '6:00', '1:00'] },
-                { type: 'problem', q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay en total?', visual: '🐄🐄🐔🐔', ans: 16, opts: [10, 12, 14, 16] }
-            ]
+            matematicas: {
+                inicial: [
+                    { q: '¿Cuántos hay?', visual: '🍎🍎', type: 'count', ans: 3, opts: [2, 3, 4] },
+                    { q: '¿Cuántos dedos tienes en una mano?', visual: '✋', type: 'count', ans: 5, opts: [4, 5, 6] },
+                    { q: '¿Qué figura es?', visual: '🔴', type: 'shape', ans: 'círculo', opts: ['círculo', 'cuadrado', 'triángulo'] },
+                    { q: '¿Qué color es?', visual: '<span class="color-circle" style="background: #E74C3C"></span>', type: 'color', ans: 'rojo', opts: ['rojo', 'azul', 'verde'] },
+                    { q: '¿Cuál es más grande?', visual: '🐘 ', type: 'compare', ans: 'elefante', opts: ['elefante', 'hormiga'] },
+                    { q: 'Cuenta: 1, 2, 3, ?', visual: '', type: 'sequence', ans: 4, opts: [3, 4, 5] }
+                ],
+                primaria_baja: [
+                    { q: '5 + 3 = ?', visual: '', type: 'add', ans: 8, opts: [7, 8, 9, 10] },
+                    { q: '9 - 4 = ?', visual: '', type: 'sub', ans: 5, opts: [4, 5, 6, 7] },
+                    { q: '¿Cuántos lados tiene un cuadrado?', visual: '⬜', type: 'geometry', ans: 4, opts: [3, 4, 5, 6] },
+                    { q: '2 + 2 + 2 = ?', visual: '', type: 'add', ans: 6, opts: [5, 6, 7, 8] },
+                    { q: '¿Qué número viene después del 15?', visual: '', type: 'sequence', ans: 16, opts: [14, 15, 16, 17] }
+                ],
+                primaria_media: [
+                    { q: '7 × 3 = ?', visual: '', type: 'mul', ans: 21, opts: [18, 21, 24, 27] },
+                    { q: '24 ÷ 4 = ?', visual: '', type: 'div', ans: 6, opts: [5, 6, 7, 8] },
+                    { q: '¿Cuántos minutos tiene una hora?', visual: '⏰', type: 'time', ans: 60, opts: [30, 45, 60, 90] },
+                    { q: '15 + 27 = ?', visual: '', type: 'add', ans: 42, opts: [40, 42, 44, 45] },
+                    { q: '¿Qué fracción es mayor?', visual: '½ vs ¼', type: 'fraction', ans: '½', opts: ['½', '¼', 'son iguales'] }
+                ],
+                primaria_alta: [
+                    { q: '12 × 8 = ?', visual: '', type: 'mul', ans: 96, opts: [86, 96, 106, 88] },
+                    { q: '144 ÷ 12 = ?', visual: '', type: 'div', ans: 12, opts: [10, 11, 12, 13] },
+                    { q: '¿Cuántos grados tiene un ángulo recto?', visual: '∟', type: 'geometry', ans: 90, opts: [45, 90, 180, 360] },
+                    { q: '3/4 + 1/4 = ?', visual: '', type: 'fraction', ans: 1, opts: ['1/2', '1', '3/4', '2'] },
+                    { q: 'El perímetro de un cuadrado de lado 5 cm es:', visual: '', type: 'geometry', ans: 20, opts: [15, 20, 25, 30] }
+                ],
+                secundaria: [
+                    { q: '2x + 5 = 13. ¿Cuánto vale x?', visual: '', type: 'algebra', ans: 4, opts: [3, 4, 5, 6] },
+                    { q: '√81 = ?', visual: '', type: 'algebra', ans: 9, opts: [8, 9, 10, 11] },
+                    { q: '(-3) × (-4) = ?', visual: '', type: 'algebra', ans: 12, opts: [-12, 12, -7, 7] },
+                    { q: '¿Cuánto es el 25% de 200?', visual: '', type: 'percent', ans: 50, opts: [25, 50, 75, 100] },
+                    { q: 'Si a=3 y b=5, ¿cuánto es a² + b?', visual: '', type: 'algebra', ans: 14, opts: [11, 14, 16, 19] }
+                ]
+            },
+            lectura: {
+                inicial: [
+                    { q: '¿Con qué letra empieza?', visual: '🍎', type: 'letter', ans: 'M', opts: ['M', 'P', 'S'] },
+                    { q: '¿Qué palabra rima con "mesa"?', visual: '', type: 'rhyme', ans: 'beso', opts: ['silla', 'beso', 'casa'] },
+                    { q: 'La letra "A" es una...', visual: 'A', type: 'vowel', ans: 'vocal', opts: ['vocal', 'consonante'] },
+                    { q: '¿Cuántas sílabas tiene "mesa"?', visual: '', type: 'syllable', ans: 2, opts: [1, 2, 3] }
+                ],
+                primaria_baja: [
+                    { q: '¿Cuál es un sustantivo?', visual: '', type: 'grammar', ans: 'casa', opts: ['correr', 'casa', 'rápido'] },
+                    { q: 'Sinónimo de "feliz":', visual: '😊', type: 'synonym', ans: 'contento', opts: ['triste', 'contento', 'enojado'] },
+                    { q: 'Antónimo de "grande":', visual: '', type: 'antonym', ans: 'pequeño', opts: ['grande', 'pequeño', 'alto'] },
+                    { q: '¿Cómo se escribe?', visual: '🐘', type: 'spelling', ans: 'elefante', opts: ['elefante', 'elefante', 'elefante'] }
+                ],
+                primaria_media: [
+                    { q: 'El sol es...', visual: '☀️', type: 'comprehension', ans: 'una estrella', opts: ['un planeta', 'una estrella', 'una luna'] },
+                    { q: '¿Qué tipo de palabra es "rápidamente"?', visual: '', type: 'grammar', ans: 'adverbio', opts: ['sustantivo', 'adjetivo', 'adverbio'] },
+                    { q: 'Lee: "El gato duerme". ¿Qué hace el gato?', visual: '🐱', type: 'comprehension', ans: 'duerme', opts: ['come', 'duerme', 'juega'] }
+                ],
+                primaria_alta: [
+                    { q: '¿Cuál es el sujeto en: "María lee un libro"?', visual: '', type: 'grammar', ans: 'María', opts: ['María', 'lee', 'libro'] },
+                    { q: '¿Qué figura literaria es: "Tus ojos son como estrellas"?', visual: '', type: 'literary', ans: 'símil', opts: ['metáfora', 'símil', 'hipérbole'] },
+                    { q: 'La palabra "murciélago" tiene:', visual: '', type: 'spelling', ans: '5 sílabas', opts: ['4 sílabas', '5 sílabas', '6 sílabas'] }
+                ],
+                secundaria: [
+                    { q: '¿Quién escribió "Los Comentarios Reales"?', visual: '', type: 'literature', ans: 'Inca Garcilaso', opts: ['Mario Vargas Llosa', 'Inca Garcilaso', 'César Vallejo'] },
+                    { q: '¿Qué es una oración compuesta?', visual: '', type: 'grammar', ans: 'tiene 2+ verbos', opts: ['tiene 1 verbo', 'tiene 2+ verbos', 'no tiene verbo'] },
+                    { q: 'El Romanticismo en Perú se caracteriza por:', visual: '', type: 'literature', ans: 'sentimentalismo', opts: ['racionalismo', 'sentimentalismo', 'realismo'] }
+                ]
+            },
+            coding: {
+                inicial: [
+                    { q: '¿Qué viene después?', visual: '🔴 🔵 🔴 ?', type: 'pattern', ans: '🔵', opts: ['🔴', '', '🟢'] },
+                    { q: 'Ordena: pequeño, mediano, ?', visual: '', type: 'sequence', ans: 'grande', opts: ['pequeño', 'mediano', 'grande'] }
+                ],
+                primaria_baja: [
+                    { q: 'Si A=1, B=2, ¿C=?', visual: '', type: 'logic', ans: 3, opts: [2, 3, 4, 5] },
+                    { q: 'Completa: 2, 4, 6, ?', visual: '', type: 'pattern', ans: 8, opts: [7, 8, 9, 10] },
+                    { q: '¿Qué instrucción sigue?', visual: '➡️ ️ ?', type: 'algorithm', ans: '➡️', opts: ['➡️', '⬆️', '⬅️'] }
+                ],
+                primaria_media: [
+                    { q: '¿Qué falta? 1, 3, 5, ?, 9', visual: '', type: 'pattern', ans: 7, opts: [6, 7, 8, 9] },
+                    { q: 'Si x=5 y x>3, entonces...', visual: '', type: 'condition', ans: 'verdadero', opts: ['verdadero', 'falso'] },
+                    { q: 'Ordena: 15, 8, 23 → ?', visual: '', type: 'algorithm', ans: '8, 15, 23', opts: ['23, 15, 8', '8, 15, 23', '15, 8, 23'] }
+                ],
+                primaria_alta: [
+                    { q: 'En binario, 5 es:', visual: '', type: 'binary', ans: '101', opts: ['100', '101', '110', '111'] },
+                    { q: 'Si A=verdadero y B=falso, A Y B =', visual: '', type: 'logic', ans: 'falso', opts: ['verdadero', 'falso'] },
+                    { q: '¿Qué es un algoritmo?', visual: '', type: 'concept', ans: 'serie de pasos', opts: ['un número', 'serie de pasos', 'una figura'] }
+                ],
+                secundaria: [
+                    { q: '¿Qué valor tiene x? x = 3 + 2 × 4', visual: '', type: 'algorithm', ans: 11, opts: [20, 11, 14, 9] },
+                    { q: 'En Python, print(2**3) muestra:', visual: '', type: 'programming', ans: 8, opts: [6, 8, 9, 5] },
+                    { q: '¿Qué es una variable?', visual: '', type: 'concept', ans: 'almacena datos', opts: ['un número fijo', 'almacena datos', 'una operación'] }
+                ]
+            },
+            thinking: {
+                inicial: [
+                    { q: 'Tienes 2 manzanas y comes 1. ¿Cuántas quedan?', visual: '🍎🍎', type: 'problem', ans: 1, opts: [0, 1, 2] },
+                    { q: '¿Qué necesitas para ver de noche?', visual: '🌙', type: 'reasoning', ans: 'luz', opts: ['agua', 'luz', 'comida'] }
+                ],
+                primaria_baja: [
+                    { q: 'Si hoy es lunes, mañana será...', visual: '', type: 'logic', ans: 'martes', opts: ['domingo', 'martes', 'miércoles'] },
+                    { q: 'Un tren sale a las 3:00 y tarda 2 horas. ¿A qué hora llega?', visual: '🚂', type: 'time', ans: '5:00', opts: ['4:00', '5:00', '6:00'] }
+                ],
+                primaria_media: [
+                    { q: 'Ana tiene 8 años. Luis tiene 3 años más. ¿Cuántos años tiene Luis?', visual: '', type: 'problem', ans: 11, opts: [9, 11, 13, 15] },
+                    { q: 'Si todos los gatos tienen 4 patas, y Félix es un gato, ¿cuántas patas tiene Félix?', visual: '🐱', type: 'logic', ans: 4, opts: [2, 3, 4, 5] }
+                ],
+                primaria_alta: [
+                    { q: 'En una granja hay 3 vacas y 2 gallinas. ¿Cuántas patas hay?', visual: '🐄', type: 'problem', ans: 16, opts: [10, 12, 14, 16] },
+                    { q: 'Si 5 lápices cuestan S/10, ¿cuánto cuestan 3 lápices?', visual: '', type: 'problem', ans: 6, opts: [4, 6, 8, 10] }
+                ],
+                secundaria: [
+                    { q: 'Un artículo cuesta S/120 con 20% de descuento. ¿Cuánto pagas?', visual: '', type: 'problem', ans: 96, opts: [96, 100, 104, 110] },
+                    { q: 'Si 3 obreros hacen una obra en 12 días, ¿cuánto tardarán 6 obreros?', visual: '', type: 'reasoning', ans: 6, opts: [4, 6, 8, 24] },
+                    { q: 'La suma de 3 números consecutivos es 30. ¿Cuál es el mayor?', visual: '', type: 'algebra', ans: 11, opts: [9, 10, 11, 12] }
+                ]
+            }
         };
 
         // ESTADO
         let user = null;
+        let userAge = null;
+        let userGrade = null;
         let currentCategory = null;
-        let askedQuestions = { matematicas: [], lectura: [], coding: [], thinking: [] };
+        let askedQuestions = {};
         let currentExercise = null;
         let questionNum = 1;
         let correctCount = 0;
         let streak = 0;
         let timer = null;
-        let timeLeft = 900; // 15 minutos
-        let stats = { xp: 0, stars: 0, level: 1 };
+        let timeLeft = 1800; // 30 minutos
+        let stats = { xp: 0, stars: 0, level: 1, lastDate: null, savedProgress: null };
+        let speechSynth = window.speechSynthesis;
+        let voices = [];
 
-        // AUDIO
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
+        // CARGAR VOCES
+        function loadVoices() {
+            voices = speechSynth.getVoices();
+        }
+        
+        if (speechSynth.onvoiceschanged !== undefined) {
+            speechSynth.onvoiceschanged = loadVoices;
+        }
 
-        function playSound(type) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
-            if (type === 'correct') {
-                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.4);
-            } else if (type === 'wrong') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                osc.start(audioCtx.currentTime);
-                osc.stop(audioCtx.currentTime + 0.3);
+        // AUDIO - SOLO CUANDO SE PRESIONA EL BOTÓN
+        function speakQuestion() {
+            if (!currentExercise) return;
+            
+            speechSynth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(currentExercise.q);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            utterance.pitch = 0.9; // Voz más grave (masculina)
+            
+            // Buscar voz masculina en español
+            const maleVoice = voices.find(v => 
+                v.lang.includes('es') && 
+                (v.name.includes('Male') || v.name.includes('Masculino') || !v.name.includes('Female'))
+            );
+            
+            if (maleVoice) {
+                utterance.voice = maleVoice;
             }
+            
+            speechSynth.speak(utterance);
         }
 
         // TIMER
         function startTimer() {
-            timeLeft = 900;
             updateTimerDisplay();
             document.getElementById('timer-display').classList.add('active');
             
@@ -459,8 +488,12 @@
                 updateTimerDisplay();
                 
                 if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    finishSession();
+                    finishSession(true);
+                }
+                
+                // Guardar progreso cada minuto
+                if (timeLeft % 60 === 0) {
+                    saveProgress();
                 }
             }, 1000);
         }
@@ -472,22 +505,74 @@
                 `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
+        // GUARDAR PROGRESO
+        function saveProgress() {
+            const progress = {
+                user,
+                userAge,
+                userGrade,
+                askedQuestions,
+                questionNum,
+                correctCount,
+                streak,
+                timeLeft,
+                stats,
+                savedAt: new Date().toISOString()
+            };
+            localStorage.setItem('mathquest_peru_progress', JSON.stringify(progress));
+            localStorage.setItem('mathquest_peru_lastdate', new Date().toDateString());
+        }
+
+        // CARGAR PROGRESO
+        function loadProgress() {
+            const saved = localStorage.getItem('mathquest_peru_progress');
+            const lastDate = localStorage.getItem('mathquest_peru_lastdate');
+            const today = new Date().toDateString();
+            
+            if (saved && lastDate === today) {
+                const progress = JSON.parse(saved);
+                user = progress.user;
+                userAge = progress.userAge;
+                userGrade = progress.userGrade;
+                askedQuestions = progress.askedQuestions || {};
+                questionNum = progress.questionNum || 1;
+                correctCount = progress.correctCount || 0;
+                streak = progress.streak || 0;
+                timeLeft = progress.timeLeft || 1800;
+                stats = progress.stats || { xp: 0, stars: 0, level: 1 };
+                return true;
+            }
+            return false;
+        }
+
+        function getGradeInfo(age) {
+            return GRADE_LEVELS[age.toString()] || { level: 'Desconocido', grade: '', category: 'primaria_baja' };
+        }
+
         function selectCategory(cat) {
             currentCategory = cat;
+            if (!askedQuestions[cat]) askedQuestions[cat] = [];
+            
             document.getElementById('category-screen').classList.add('hidden');
             document.getElementById('exercise-screen').classList.remove('hidden');
+            
             startTimer();
             nextQuestion();
         }
 
         function getNonRepeatingQuestion() {
-            const bank = QUESTION_BANK[currentCategory];
-            const asked = askedQuestions[currentCategory];
+            const gradeCategory = getGradeInfo(userAge).category;
+            const bank = QUESTION_BANK[currentCategory][gradeCategory] || QUESTION_BANK[currentCategory]['primaria_baja'];
+            const asked = askedQuestions[currentCategory] || [];
+            
+            // Filtrar preguntas no hechas
             const available = bank.filter((_, idx) => !asked.includes(idx));
             
+            // Si se acabaron, reiniciar
             if (available.length === 0) {
                 askedQuestions[currentCategory] = [];
                 asked.length = 0;
+                return bank[Math.floor(Math.random() * bank.length)];
             }
             
             const randomIdx = Math.floor(Math.random() * available.length);
@@ -500,11 +585,8 @@
         function nextQuestion() {
             currentExercise = getNonRepeatingQuestion();
             document.getElementById('question-counter').textContent = `${questionNum} / 10`;
-            document.getElementById('category-badge').textContent = CATEGORIES[currentCategory].name;
-            document.getElementById('category-badge').style.background = CATEGORIES[currentCategory].color;
             
             renderExercise(currentExercise);
-            setTimeout(speakQuestion, 500);
         }
 
         function renderExercise(ex) {
@@ -513,7 +595,7 @@
             
             const visual = document.getElementById('visual-container');
             if (ex.visual) {
-                visual.innerHTML = `<div class="question-visual">${ex.visual}</div>`;
+                visual.innerHTML = `<div style="font-size: 64px;">${ex.visual}</div>`;
             } else {
                 visual.innerHTML = '';
             }
@@ -524,12 +606,28 @@
             ex.opts.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.textContent = opt;
+                
+                if (currentExercise.type === 'color') {
+                    btn.innerHTML = `<span class="color-circle" style="background: ${getColorHex(opt)}"></span>${opt}`;
+                } else {
+                    btn.textContent = opt;
+                }
+                
                 btn.onclick = () => handleAnswer(opt, btn);
                 optsContainer.appendChild(btn);
             });
             
             document.getElementById('feedback-container').innerHTML = '';
+        }
+
+        function getColorHex(colorName) {
+            const colors = {
+                'rojo': '#E74C3C',
+                'azul': '#3498DB',
+                'verde': '#2ECC71',
+                'amarillo': '#F1C40F'
+            };
+            return colors[colorName] || '#95A5A6';
         }
 
         function handleAnswer(value, btn) {
@@ -557,7 +655,7 @@
             
             setTimeout(() => {
                 if (questionNum >= 10) {
-                    finishSession();
+                    finishSession(false);
                 } else {
                     questionNum++;
                     nextQuestion();
@@ -575,31 +673,61 @@
             }
         }
 
-        function speakQuestion() {
-            if (!currentExercise) return;
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(currentExercise.q);
-                utterance.lang = 'es-ES';
-                utterance.rate = 0.9;
-                window.speechSynthesis.speak(utterance);
+        function playSound(type) {
+            // Sonidos simples con Web Audio API
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            const audioCtx = new AudioContext();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            if (type === 'correct') {
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.3);
             }
         }
 
-        function finishSession() {
+        function finishSession(timeOut) {
             clearInterval(timer);
             document.getElementById('timer-display').classList.remove('active');
             document.getElementById('streak-display').classList.remove('show');
+            
+            saveProgress();
             
             const xpGain = correctCount * 10;
             stats.xp += xpGain;
             stats.level = Math.floor(stats.xp / 100) + 1;
             
-            alert(`¡Sesión completada!\n\nCorrectas: ${correctCount}/10\nXP ganados: ${xpGain}\nNivel: ${stats.level}\n\n¡Excelente trabajo! 🎉`);
+            let message = timeOut ? 
+                '¡Se acabó el tiempo!\n\n' : 
+                '¡Sesión completada!\n\n';
+            message += `Correctas: ${correctCount}/10\n`;
+            message += `XP ganados: ${xpGain}\n`;
+            message += `Nivel: ${stats.level}\n\n`;
+            message += 'Tu progreso se ha guardado.\n';
+            message += '¡Vuelve mañana para continuar! 🇵';
             
-            questionNum = 1;
-            correctCount = 0;
-            streak = 0;
+            alert(message);
+            
+            // Limpiar progreso del día
+            localStorage.removeItem('mathquest_peru_progress');
+            localStorage.removeItem('mathquest_peru_lastdate');
+            
             showCategories();
         }
 
@@ -611,29 +739,54 @@
         }
 
         function showScreen(id) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('category-screen').classList.add('hidden');
-            document.getElementById('exercise-screen').classList.add('hidden');
+            ['login-screen', 'category-screen', 'exercise-screen'].forEach(sid => {
+                document.getElementById(sid).classList.add('hidden');
+            });
             document.getElementById(id).classList.remove('hidden');
         }
 
         // INIT
+        document.getElementById('age-input').addEventListener('input', function() {
+            const age = parseInt(this.value);
+            if (age >= 3 && age <= 14) {
+                const info = getGradeInfo(age);
+                document.getElementById('grade-display').textContent = 
+                    `${info.level} - ${info.grade}`;
+            } else {
+                document.getElementById('grade-display').textContent = '';
+            }
+        });
+
         document.getElementById('start-btn').onclick = () => {
             const name = document.getElementById('name-input').value.trim();
             const age = parseInt(document.getElementById('age-input').value);
             
-            if (!name || age < 4 || age > 14) {
-                alert('Por favor ingresa tu nombre y edad (4-14 años)');
+            if (!name || age < 3 || age > 14) {
+                alert('Por favor ingresa tu nombre y edad (3-14 años)');
                 return;
             }
             
             user = { name, age };
+            userAge = age;
+            userGrade = getGradeInfo(age);
+            
             document.getElementById('user-greeting').textContent = `¡Hola, ${name}! 👋`;
+            document.getElementById('grade-info').textContent = 
+                `${userGrade.level} - ${userGrade.grade}`;
+            
             showScreen('category-screen');
         };
 
+        // Verificar si hay progreso guardado al cargar
         window.onload = () => {
-            // Initialize
+            loadVoices();
+            const hasProgress = loadProgress();
+            if (hasProgress && user) {
+                document.getElementById('user-greeting').textContent = `¡Hola, ${user.name}! 👋`;
+                document.getElementById('grade-info').textContent = 
+                    `${userGrade.level} - ${userGrade.grade}`;
+                showScreen('category-screen');
+            }
         };
     </script>
 </body>
